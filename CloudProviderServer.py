@@ -33,9 +33,7 @@ def decryptData(data, clientPubKeyN, clientPubKeyE):
     dkg.compute_privKeyShare()
     c1 = long(data[Const.C1])
     c2 = long(data[Const.C2])
-    # protDate = data[Const.DATE]
     sign = base64.decodestring(data[Const.SIGN])
-    # message = rsa.generateMessageForSign([str(clientPubKeyN), str(clientPubKeyE), str(int(c1)), str(int(c2)), str(protDate)])
     message = rsa.generateMessageForSign([str(clientPubKeyN), str(clientPubKeyE), str(int(c1)), str(int(c2))])
     # Verify signature
     if rsa.verifySign([clientPubKeyN, clientPubKeyE], message, sign) is True:
@@ -47,10 +45,6 @@ def decryptData(data, clientPubKeyN, clientPubKeyE):
 
 # Send to client company public key
 def sendPubKeyCompany(key):
-    # global CloudProviderPubKeyN, CloudProviderPubKeyE
-    # message = str(key)+","+str(CloudProviderPubKeyN)+","+str(CloudProviderPubKeyE)
-    # sign = base64.encodestring(rsa.sign(message, Const.CLOUD_PROVIDER))
-    # data = json.dumps({Const.COMPANY_PUBKEY: key, Const.NE: CloudProviderPubKeyN, Const.E: CloudProviderPubKeyE, Const.SIGN: sign}, sort_keys=True)
     global CloudProviderPubKeyN, CloudProviderPubKeyE, CompanyPubKeyN, CompanyPubKeyE
     sign = rsa.generateSign(
         [str(key), str(CompanyPubKeyN), str(CompanyPubKeyE), str(CloudProviderPubKeyN), str(CloudProviderPubKeyE)],
@@ -147,14 +141,6 @@ def decrypt():
         c1, m = decryptData(content, clientPubKeyN, clientPubKeyE)
         if c1 is Const.BAD_REQ:
             return Const.BAD_REQ
-        # sign = rsa.generateSign([str(CloudProviderPubKeyN), str(CloudProviderPubKeyE), str(clientPubKeyN), str(clientPubKeyE), str(c1),
-        #                          str(m), protShare], Const.CLOUD_PROVIDER)
-        # data = json.dumps({Const.NE: CloudProviderPubKeyN, Const.E: CloudProviderPubKeyE, Const.CLIENT+"_"+Const.NE: clientPubKeyN,
-        #                    Const.CLIENT+"_"+Const.E: clientPubKeyE, Const.C1: c1, Const.C2: m,
-        #                    Const.PROT_SHARE: base64.encodestring(protShare), Const.SIGN: sign})
-        # headers = {'Content-Type': 'application/json'}
-        # response = requests.post("http://"+Const.COMPANY_ADDR+":"+Const.COMPANY_PORT+"/"+Const.DECRYPT, data=data, headers=headers)
-        # return response.content
         m = str(m)
         sign = rsa.generateSign([m], Const.CLOUD_PROVIDER)
         #m = encryptClientData(m, clientPubKeyN, clientPubKeyE)

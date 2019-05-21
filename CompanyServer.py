@@ -40,7 +40,6 @@ def decryptData(data, clientPubKeyN, clientPubKeyE):
     dkg2.setPubKey(PubKeyCompany)
     c1 = (int)(data[Const.C1])
     c2 = (int)(data[Const.C2])
-    # protShare = base64.decodestring(data[Const.PROT_SHARE])
     sign = base64.decodestring(data[Const.SIGN])
     message = rsa.generateMessageForSign([str(clientPubKeyN), str(clientPubKeyE), str(c1), str(c2)])
     # Verify signature
@@ -114,8 +113,6 @@ def decrypt():
     if request.method == 'POST':
         # Decrypt data received from Cloud Provider
         content = request.get_json()
-        # clientPubKeyN = (long)(content[Const.CLIENT+"_"+Const.NE])
-        # clientPubKeyE = (long)(content[Const.CLIENT+"_"+Const.E])
         clientPubKeyN = (long)(content[Const.NE])
         clientPubKeyE = (long)(content[Const.E])
         m = decryptData(content, clientPubKeyN, clientPubKeyE)
