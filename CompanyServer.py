@@ -123,7 +123,7 @@ def decrypt():
             return Const.BAD_REQ
         m = str(m)
         sign = rsa.generateSign([m], Const.COMPANY)
-        m = encryptClientData(m, clientPubKeyN, clientPubKeyE)
+        #m = encryptClientData(m, clientPubKeyN, clientPubKeyE)
         return json.dumps({Const.M: m, Const.SIGN: sign})
     else:
         return Const.NO_METHOD
@@ -153,7 +153,7 @@ def startKey():
         return Const.NO_METHOD
 
 if __name__ == "__main__":
-    global dkg1, dkg2, CompanyPubKeyN, CompanyPubKeyE, aesKey, aesIV, poly1, poly2
+    global dkg1, dkg2, aesKey, aesIV, poly1, poly2
     # Create Pedersen objects
     dkg1 = PedersenDKG(Const.CLIENT_DKG_ID1, None)
     dkg2 = PedersenDKG(Const.CLIENT_DKG_ID2, None)

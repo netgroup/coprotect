@@ -106,7 +106,6 @@ def shares():
             dkg = setPedersenDKG(share1, share2, companyPubShare)
             share1 = dkg.shares[Const.CLIENT_DKG_ID1-1]
             share2 = dkg.shares[Const.CLIENT_DKG_ID2-1]
-            print "share1 = ", share1, "\nshare2 = ", share2
             pub = dkg.pubKey
             sign = rsa.generateSign([str(CloudProviderPubKeyN), str(CloudProviderPubKeyE), str(share1), str(share2), str(pub)], Const.CLOUD_PROVIDER)
             share1 = base64.encodestring(str(share1))
@@ -157,15 +156,13 @@ def decrypt():
         # response = requests.post("http://"+Const.COMPANY_ADDR+":"+Const.COMPANY_PORT+"/"+Const.DECRYPT, data=data, headers=headers)
         # return response.content
         m = str(m)
-        print "m = (", len(bytes(m)), ") ", bytes(m)
         sign = rsa.generateSign([m], Const.CLOUD_PROVIDER)
-        m = encryptClientData(m, clientPubKeyN, clientPubKeyE)
+        #m = encryptClientData(m, clientPubKeyN, clientPubKeyE)
         return json.dumps({Const.M: m, Const.SIGN: sign})
     else:
         return Const.NO_METHOD
 
 if __name__ == "__main__":
-    global dkg, CloudProviderPubKeyN, CloudProviderPubKeyE, poly
     # Create Pedersen object
     dkg = PedersenDKG(Const.CLOUD_PROVIDER_DKG_ID, None)
     poly = dkg.poly

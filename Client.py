@@ -57,8 +57,8 @@ def loadConfig(infile):
 
 # Obtain organization public key from Cloud Provider server
 def getPubKeyCompany(n, e):
+    global PubKeyCompany, CloudProviderPubKeyN, CloudProviderPubKeyE, CompanyPubKeyN, CompanyPubKeyE
     if PubKeyCompany is None:
-        global PubKeyCompany, CloudProviderPubKeyN, CloudProviderPubKeyE, CompanyPubKeyN, CompanyPubKeyE
         # Create signature for sent data
         sign = rsa.generateSign([str(n), str(e)], Const.CLIENT)
         data = json.dumps({Const.NE: n, Const.E: e, Const.SIGN: sign})
@@ -215,7 +215,6 @@ def encryptFile(infile, encfile):
         return pubKeyCompany
     # Create file encryption key
     m = generateKey()
-    print "m =", m
     # Compute hash chain key for encrypt file
     # hashKey, hashDate = computeHashChainKey(ClientPubKeyN, ClientPubKeyE)
     # if hashDate is None:
@@ -304,6 +303,10 @@ def decryptFile(encfile, decfile):
         data = data.split()
         c1 = data[0][1:-1]
         c2 = data[1][0:-1]
+        if c1[-1:] is "L":
+            c1 = c1[:-1]
+        if c2[-1:] is "L":
+            c2 = c2[:-1]
         # Create POST request
         # sign = rsa.generateSign([str(ClientPubKeyN), str(ClientPubKeyE), str(c1), str(c2), str(protDate)], Const.CLIENT)
         # data = json.dumps({Const.NE: ClientPubKeyN, Const.E: ClientPubKeyE, Const.C1: c1, Const.C2: c2,
@@ -317,10 +320,10 @@ def decryptFile(encfile, decfile):
             return Const.ERROR
         data = json.loads(response.content)
         # Get request response
-        m = rsa.decryptRSA(base64.decodestring(data[Const.M]), Const.CLIENT)
-        # mCP = data[Const.M]
+        # m = rsa.decryptRSA(base64.decodestring(data[Const.M]), Const.CLIENT)
+        m = data[Const.M]
         sign = base64.decodestring(data[Const.SIGN])
-        message = rsa.generateMessageForSign([m])
+        message = rsa.generateMessageForSign([str(m)])
         # Verify response
         if rsa.verifySign([CloudProviderPubKeyN, CloudProviderPubKeyE], message, sign) is not True:
             return Const.ERROR
@@ -335,10 +338,10 @@ def decryptFile(encfile, decfile):
             return Const.ERROR
         data = json.loads(responseCompany.content)
         # Get request response
-        m = rsa.decryptRSA(base64.decodestring(data[Const.M]), Const.CLIENT)
-        # mCompany = data[Const.M]
+        # m = rsa.decryptRSA(base64.decodestring(data[Const.M]), Const.CLIENT)
+        m = data[Const.M]
         sign = base64.decodestring(data[Const.SIGN])
-        message = rsa.generateMessageForSign([m])
+        message = rsa.generateMessageForSign([str(m)])
         # Verify response
         if rsa.verifySign([CompanyPubKeyN, CompanyPubKeyE], message, sign) is not True:
             return Const.ERROR
@@ -354,9 +357,7 @@ def decryptFile(encfile, decfile):
                 if n == 0:
                     break
                 # Decrypt data
-                print "Leggo file:", data
                 decd = aes.decrypt(aesCipher, data)
-                print "Ho decifrato:", decd
                 n = len(decd)
                 if fsz > n:
                     fout.write(decd)
