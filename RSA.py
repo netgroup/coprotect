@@ -27,11 +27,7 @@ def encryptRSA(data, infile, comps):
         key = RSA.construct(comps, consistency_check=True).publickey()
     # Encrypt data with the public RSA key
     cipherRSA = PKCS1_OAEP.new(key)
-    encData = ""
-    while len(bytes(data)) > Const.RSA_MAX_BYTES_LEN:
-        encData += cipherRSA.encrypt(data[:Const.RSA_MAX_BYTES_LEN])
-        data = data[Const.RSA_MAX_BYTES_LEN:]
-    encData += cipherRSA.encrypt(data)
+    encData = cipherRSA.encrypt(data)
     return encData
 
 # Decrypt data with the private RSA key
@@ -39,13 +35,8 @@ def decryptRSA(data, infile):
     private_key = RSA.import_key(open(infile+"_private.pem").read())
     # Decrypt the session key with the private RSA key
     cipherRSA = PKCS1_OAEP.new(private_key)
-    decData = ""
-    while len(bytes(data)) > 256:#Const.RSA_MAX_BYTES_LEN:
-        s = data[:256]#Const.RSA_MAX_BYTES_LEN]
-        decData += cipherRSA.decrypt(s)
-        data = data[256:]#Const.RSA_MAX_BYTES_LEN:]
-    decData += cipherRSA.decrypt(data)
-    return decData
+    data = cipherRSA.decrypt(data)
+    return data
 
 def generateMessageForSign(data):
     message = ""

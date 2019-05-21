@@ -27,7 +27,7 @@ class PedersenDKG:
         for i in range(1, num+1):
             share = 0
             for j in range(max_degree):
-                share += coeff[j]*pow(i,j)
+                share += ElGamal.mulmod(coeff[j], pow(i,j), mod)
             self.shares.append(share % mod)
 
     # Compute public key share
@@ -52,11 +52,11 @@ class PedersenDKG:
             if i != self.id:
                 num = -i % Const.Q
                 den = ElGamal.modinv(self.id-i, Const.Q)
-                self.delta = (num * den) % Const.Q
+                self.delta = ElGamal.mulmod(num, den, Const.Q)
 
     # Compute private key share
     def compute_privKeyShare(self):
-        self.s = (long)(self.y * self.delta) % Const.Q
+        self.s = (long)(ElGamal.mulmod(self.y, self.delta, Const.Q))
 
     # Class constructor
     def __init__(self, id, poly):

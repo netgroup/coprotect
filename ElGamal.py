@@ -1,9 +1,24 @@
 from Cryptodome.Random import random
 import Const
 
-# Compute modular exponentiation a^b%n
-def powerMod(a, b, n):
-    return pow(a, b, n)
+# Compute (a * b) % mod
+def mulmod(a, b, mod):
+    res = 0  # Initialize result
+    a = a % mod
+    while (b > 0):
+        # If b is odd, add 'a' to result
+        if (b % 2 == 1):
+            res = (res + a) % mod
+        # Multiply 'a' with 2
+        a = (a * 2) % mod
+        # Divide b by 2
+        b //= 2
+    # Return result
+    return res % mod
+
+# Compute modular exponentiation (a ^ b) % n
+def powerMod(a, b, mod):
+    return pow(a, b, mod)
 
 # Compute extended greatest common divisor
 def xgcd(a,b):
@@ -28,7 +43,7 @@ def encrypt(m, h):
     y = random.randint(1, Const.P-1)
     c1 = powerMod(Const.G, y, Const.P)
     s = powerMod(h, y, Const.P)
-    c2 = m*s % Const.P
+    c2 = mulmod(m,s, Const.P)
     return (int)(c1), (int)(c2)
 
 # Elgamal decryption
@@ -36,5 +51,5 @@ def decrypt(c1, c2, x):
     x %= Const.P
     s = powerMod(c1, x, Const.P)
     inv_s = modinv(s, Const.P)
-    m = (c2 * inv_s) % Const.P
+    m = mulmod(c2, inv_s, Const.P)
     return m
