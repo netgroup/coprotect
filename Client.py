@@ -21,6 +21,8 @@ m = None
 # Write message in log file
 def log(message):
     with open(Const.LOG+".txt", 'a') as fout:
+        # message.replace(".n","\n", message.count(".n"))
+        # message.replace(".t","\t", message.count(".t"))
         message = "["+str(datetime.now())+"] "+message+"\n"
         fout.write(message)
 
@@ -64,6 +66,7 @@ def getPubKeyCompany(n, e):
         headers = {'Content-Type': 'application/json'}
         response = requests.post("http://"+Const.CLOUD_PROVIDER_ADDR+":"+Const.CLOUD_PROVIDER_PORT+"/"+Const.COMPANY_PUBKEY, data=data, headers=headers)
         if (response.content is Const.NO_METHOD) or (response.content is Const.BAD_REQ):
+            log("CLIENT: Error in Company public key request!")
             return response.content
         # Get request response
         log("CLIENT: Parsing request response")
@@ -73,11 +76,14 @@ def getPubKeyCompany(n, e):
         CloudProviderPubKeyE = data[Const.E]
         CompanyPubKeyN = data[Const.COMPANY + "_" + Const.NE]
         CompanyPubKeyE = data[Const.COMPANY + "_" + Const.E]
+        logMessage = data[Const.LOG]
+        log(logMessage)
         sign = base64.decodestring(data[Const.SIGN])
         message = rsa.generateMessageForSign([str(PubKeyCompany), str(CompanyPubKeyN), str(CompanyPubKeyE), str(CloudProviderPubKeyN), str(CloudProviderPubKeyE)])
         # Verify response
         log("CLIENT: Verifying response signature")
         if rsa.verifySign([CloudProviderPubKeyN, CloudProviderPubKeyE], message, sign) is True:
+            log("CLIENT: Response signature verified")
             return PubKeyCompany
         else:
             log("CLIENT: Error in signature!")
@@ -187,13 +193,16 @@ def decryptFile(encfile, decfile):
         # Get request response
         # m = rsa.decryptRSA(base64.decodestring(data[Const.M]), Const.CLIENT)
         m = data[Const.M]
+        logMessage = data[Const.LOG]
         sign = base64.decodestring(data[Const.SIGN])
+        log(logMessage)
         message = rsa.generateMessageForSign([str(m)])
         # Verify response
         log("CLIENT: Verifying response signature")
         if rsa.verifySign([CloudProviderPubKeyN, CloudProviderPubKeyE], message, sign) is not True:
-            log("CLIENT: Error in signature")
+            log("CLIENT: Error in signature!")
             return Const.ERROR
+        log("CLIENT: Response signature verified")
         # Ask decryption to Company server
         sign = rsa.generateSign([str(ClientPubKeyN), str(ClientPubKeyE), str(c1), str(m)], Const.CLIENT)
         data = json.dumps(
@@ -209,13 +218,16 @@ def decryptFile(encfile, decfile):
         # Get request response
         # m = rsa.decryptRSA(base64.decodestring(data[Const.M]), Const.CLIENT)
         m = data[Const.M]
+        logMessage = data[Const.LOG]
         sign = base64.decodestring(data[Const.SIGN])
+        log(logMessage)
         message = rsa.generateMessageForSign([str(m)])
         # Verify response
         log("CLIENT: Verifying response signature")
         if rsa.verifySign([CompanyPubKeyN, CompanyPubKeyE], message, sign) is not True:
-            log("CLIENT: Error in signature")
+            log("CLIENT: Error in signature!")
             return Const.ERROR
+        log("CLIENT: Response signature verified")
         log("CLIENT: Generating asymmetric encryption key")
         key = aes.getKey((long)(m))
         # Read size of plain text
