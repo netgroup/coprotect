@@ -2,6 +2,7 @@ from Cryptodome.Cipher import AES
 from Cryptodome.Hash import SHA256
 from Cryptodome.Random import random
 from datetime import date, datetime
+from flask import Flask, request, render_template
 from tkinter import *
 import ClientGUI
 import base64, Const, ElGamal, json, os, requests, struct, sys
@@ -21,8 +22,6 @@ m = None
 # Write message in log file
 def log(message):
     with open(Const.LOG+".txt", 'a') as fout:
-        # message.replace(".n","\n", message.count(".n"))
-        # message.replace(".t","\t", message.count(".t"))
         message = "["+str(datetime.now())+"] "+message+"\n"
         fout.write(message)
 
@@ -251,9 +250,21 @@ def decryptFile(encfile, decfile):
                 fsz -= n
     return None
 
+################# FLASK SERVER #################
+app = Flask(__name__)
+
+@app.route("/", methods=['GET'])
+def index():
+    if request.method == 'GET':
+        message = "Hello, World"
+        return render_template('index.html', message=message)
+    else:
+        return Const.NO_METHOD
+
 if __name__ == "__main__":
     loadConfig(Const.CLIENT + "_" + Const.CONFIG + '.json')
-    root = Tk()
-    gui = ClientGUI.ClientGUI(root)
-    log("CLIENT: Creating GUI")
-    root.mainloop()
+    # root = Tk()
+    # gui = ClientGUI.ClientGUI(root)
+    # log("CLIENT: Creating GUI")
+    # root.mainloop()
+    app.run(host=Const.CLIENT_ADDR, port=Const.CLIENT_PORT)
