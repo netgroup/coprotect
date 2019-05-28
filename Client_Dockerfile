@@ -33,6 +33,7 @@ COPY ./clear_file.txt /app/
 RUN pip install Flask
 RUN pip install requests
 RUN pip install pycryptodomex
+RUN pip install python-tk
 #RUN pip install psutil
 
 # Make port 80 available to the world outside this container
@@ -42,5 +43,5 @@ RUN pip install pycryptodomex
 #ENV NAME World
 
 # Run app.py when the container launches
-#CMD ["python", "Client.py", "clear_file.txt", "dec_file.txt"]
-CMD ["bash"]
+CMD ["python", "Client.py", "clear_file.txt", "dec_file.txt"]
+#CMD ["bash"]
