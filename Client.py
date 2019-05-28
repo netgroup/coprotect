@@ -3,8 +3,8 @@ from Cryptodome.Hash import SHA256
 from Cryptodome.Random import random
 from datetime import date, datetime
 from flask import Flask, request, render_template
-from tkinter import *
-import ClientGUI
+#from tkinter import *
+#import ClientGUI
 import base64, Const, ElGamal, json, os, requests, struct, sys
 import RSA as rsa
 import AES as aes
