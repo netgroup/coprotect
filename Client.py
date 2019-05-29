@@ -2,12 +2,13 @@ from Cryptodome.Cipher import AES
 from Cryptodome.Hash import SHA256
 from Cryptodome.Random import random
 from datetime import date, datetime
-from flask import Flask, request, render_template
+from flask import Flask, request, render_template, Blueprint
+from flask_restplus import Resource, Api
 #from tkinter import *
 #import ClientGUI
-import base64, Const, ElGamal, json, os, requests, struct, sys
-import RSA as rsa
-import AES as aes
+import base64, crypto.Const as Const, crypto.ElGamal as ElGamal, json, os, requests, struct, sys
+import crypto.RSA as rsa
+import crypto.AES as aes
 
 # Cryptographic keys
 PubKeyCompany = None
@@ -110,7 +111,7 @@ def encryptFile(infile, encfile):
     pubKeyCompany = getPubKeyCompany(ClientPubKeyN, ClientPubKeyE)
     if pubKeyCompany is Const.BAD_REQ or pubKeyCompany is Const.NO_METHOD or pubKeyCompany is Const.ERROR:
         log("CLIENT: Error "+pubKeyCompany+ " getting company public key")
-        return pubKeyCompany
+        return Const.ERROR
     # Create file encryption key
     m = generateKey()
     c1, c2 = ElGamal.encrypt(m, pubKeyCompany)
@@ -146,7 +147,10 @@ def encryptFile(infile, encfile):
                 log("CLIENT: Writing encrypted data")
                 fout.write(encData)
     saveConfig(Const.CLIENT + "_" + Const.CONFIG + '.json')
-    return None
+    fout = open(encfile, "r")
+    if fout.mode == "r":
+        return fout.read()
+    return Const.ERROR
 
 # Decrypt file
 def decryptFile(encfile, decfile):
@@ -248,18 +252,59 @@ def decryptFile(encfile, decfile):
                 else:
                     fout.write(decd[:fsz]) # Remove padding on last block
                 fsz -= n
-    return None
+    fout = open(decfile, "r")
+    if fout.mode == "r":
+        return fout.read()
+    return Const.ERROR
 
 ################# FLASK SERVER #################
-app = Flask(__name__)
+app = Flask(__name__)   #  Create a Flask WSGI application
+api = Api(app)          #  Create a Flask-RESTPlus API
 
-@app.route("/", methods=['GET'])
-def index():
-    if request.method == 'GET':
-        message = "Hello, World"
-        return render_template('index.html', message=message)
-    else:
-        return Const.NO_METHOD
+crypto_ns = api.namespace('crypto', description='Operations related to data protection')
+log_ns = api.namespace('log', description='Operations related to operations logging')
+
+@crypto_ns.route("/encrypt")
+class Encrypt(Resource):
+
+    @api.expect("It needs an HTML form with its enctype attribute set to 'multipart/form-data', posting the file to a URL")
+    @api.response(200, "File successfully encrypted")
+    @api.response(500, "File encryption failed")
+    def post(self):
+        f = request.files['file']
+        enc_f = encryptFile(f,"enc_"+f)
+        if enc_f is Const.ERROR:
+            return None, 500
+        return enc_f, 200
+
+
+@crypto_ns.route("/decrypt")
+class Decrypt(Resource):
+
+    @api.expect("It needs an HTML form with its enctype attribute set to 'multipart/form-data', posting the file to a URL")
+    @api.response(200, "File successfully decrypted")
+    @api.response(500, "File decryption failed")
+    def post(self):
+        f = request.files['file']
+        dec_f = decryptFile(f, "dec_" + f)
+        if dec_f is Const.ERROR:
+            return None, 500
+        return dec_f, 200
+
+
+@log_ns.route("/getLog")
+class Log(Resource):
+
+    @api.response(200, "Log successfull")
+    def get(self):
+        return None, 200
+
+def initialize_app(flask_app):
+    blueprint = Blueprint('api', __name__, url_prefix='/api')
+    api.init_app(blueprint)
+    api.add_namespace(crypto_ns)
+    api.add_namespace(log_ns)
+    flask_app.register_blueprint(blueprint)
 
 if __name__ == "__main__":
     loadConfig(Const.CLIENT + "_" + Const.CONFIG + '.json')
@@ -267,4 +312,5 @@ if __name__ == "__main__":
     # gui = ClientGUI.ClientGUI(root)
     # log("CLIENT: Creating GUI")
     # root.mainloop()
+    initialize_app(app)
     app.run(host=Const.CLIENT_ADDR, port=Const.CLIENT_PORT)
