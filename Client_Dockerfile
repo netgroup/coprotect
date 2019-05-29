@@ -21,18 +21,21 @@ FROM python:2.7
 WORKDIR /app
 
 # Copy the current directory contents into the container at /app
+RUN mkdir /app/crypto
+RUN touch /app/__init__.py
+RUN touch /app/crypto/__init__.py
 COPY ./Client.py /app/
-COPY ./crypto/Const.py /app/
-COPY ./crypto/ElGamal.py /app/
-COPY ./crypto/RSA.py /app/
-COPY ./crypto/AES.py /app/
+COPY ./crypto/ElGamal.py /app/crypto
+COPY ./crypto/RSA.py /app/crypto
+COPY ./crypto/AES.py /app/crypto
+COPY ./crypto/Const.py /app/crypto
 COPY ./clear_file.txt /app/
 
 # Install any needed packages specified in requirements.txt
 RUN pip install Flask
 RUN pip install requests
 RUN pip install pycryptodomex
-#RUN pip install python-tk
+RUN pip install flask_restplus
 #RUN pip install psutil
 
 # Make port 80 available to the world outside this container
