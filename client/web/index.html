@@ -16,6 +16,21 @@
             body {
                 padding-top: 50px;
                 padding-bottom: 20px;
+
+            }
+            #my-awesome-dropzone {
+              width: 100%; 
+              height: 200px;
+              border : 3px #AAA dashed;
+              background: url('img/download.png');
+              background-size: contain;
+              background-repeat: no-repeat;
+              background-position: center;
+            }
+            #log {
+              width: 100%; 
+              min-height: 200px;
+
             }
         </style>
         <link rel="stylesheet" href="css/bootstrap-theme.min.css">
@@ -41,15 +56,6 @@
           <a class="navbar-brand" href="#">Coprotect</a>
         </div>
         <div id="navbar" class="navbar-collapse collapse">
-          <form class="navbar-form navbar-right" role="form">
-            <div class="form-group">
-              <input type="text" placeholder="Email" class="form-control">
-            </div>
-            <div class="form-group">
-              <input type="password" placeholder="Password" class="form-control">
-            </div>
-            <button type="submit" class="btn btn-success">Sign in</button>
-          </form>
         </div><!--/.navbar-collapse -->
       </div>
     </nav>
@@ -57,30 +63,44 @@
     <!-- Main jumbotron for a primary marketing message or call to action -->
     <div class="jumbotron">
       <div class="container">
-        <h1>Hello, world!</h1>
-        <p>This is a template for a simple marketing or informational website. It includes a large callout called a jumbotron and three supporting pieces of content. Use it as a starting point to create something more unique.</p>
-        <p><a class="btn btn-primary btn-lg" href="#" role="button">Learn more &raquo;</a></p>
+        <h1>Coprotect</h1>
+        <p>Coprotect is a new trust management ....</p>
+        <p><a class="btn btn-primary btn-lg" href="http://www.bpr4gdpr.eu/" role="button">More info &raquo;</a></p>
+
+        <p><button class="btn btn-info btn-lg" id="show-log">Show log</a></p>
+
       </div>
     </div>
 
     <div class="container">
       <!-- Example row of columns -->
       <div class="row">
-        <div class="col-md-4">
-          <h2>Heading</h2>
-          <p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui. </p>
-          <p><a class="btn btn-default" href="#" role="button">View details &raquo;</a></p>
+        <div class="col-md-6">
+          <h2>Drop file below to encrypt</h2>
+          <form action="UploadImages"
+                class="dropzone"
+                id="my-awesome-dropzone" enctype="multipart/form-data">
+          </form>
+          <div id="dropzone-previews"></div>
+        </div>
+
+
+        <div class="col-md-6">
+          <h2>Log</h2>
+          <div id="log">
+              <ul>
+                <li>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</li>
+                <li>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</li>
+                <li>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</li>
+              </ul>
+          </div>
         </div>
         
 
 
 
         
-        <form action="/file-upload" id="my-awesome-dropzone">
-          <input type="file" name="file" id="fileinput-button"/>
-        </form>
-        <div style="width: 100px; height: 100px" id="previews"></div>
-
+          
 
 
       </div>
@@ -88,13 +108,14 @@
       <hr>
 
       <footer>
-        <p>&copy; Company 2015</p>
+        <p><img src="img/bpr4gdpr_logo.png" /> University of Rome "Tor Vergata"</p>
       </footer>
     </div> <!-- /container -->        
         <script src="js/vendor/jquery-1.11.2.min.js"></script>
         
 
         <script src="js/vendor/bootstrap.min.js"></script>
+
 
         <script src="js/main.js"></script>
 

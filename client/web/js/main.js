@@ -1,41 +1,58 @@
-$(document).ready(function(){
-    /*
-  var dz = Dropzone.options.myAwesomeDropzone = { // The camelized version of the ID of the form element
-    // The configuration we've talked about above
-    url: '#',
-    previewsContainer: ".dropzone-previews",
-    uploadMultiple: true,
-    parallelUploads: 100,
-    maxFiles: 100,
-    accept: function(file, done) {
-	    if (file.name == "justinbieber.jpg") {
-	      done("Naha, you don't.");
-	    }
-	    else { done(); }
-	  }
-  };
+//$(document).ready(function(){
 
-    dz.on("addedfile", function(file) {
-      // Hookup the start button
-      file.previewElement.querySelector(".start").onclick = function() { myDropzone.enqueueFile(file); };
-    });
-*/
+    Dropzone.options.myAwesomeDropzone = {
+            paramName: "file",
+            maxFilesize: 10,
+            url: '/encrypt',
+            previewsContainer: "#dropzone-previews",
+            uploadMultiple: true,
+            parallelUploads: 5,
+            maxFiles: 20,
+            init: function() {
+                var cd;
+                this.on("success", function(file, response) {
+                    $('.dz-progress').hide();
+                    $('.dz-size').hide();
+                    $('.dz-error-mark').hide();
+                    console.log(response);
+                    console.log(file);
+                    cd = response;
+                });
+                this.on("sending", function(file, xhr, o) {
+                  console.log(file);
+                });
+                this.on("complete", function(file, resp) {
+                  console.log(resp);
+                });
+                this.on("addedfile", function(file) {
+                    var removeButton = Dropzone.createElement("<a href=\"#\">Remove file</a>");
+                    var _this = this;
+                    removeButton.addEventListener("click", function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        _this.removeFile(file);
+                        var name = "largeFileName=" + cd.pi.largePicPath + "&smallFileName=" + cd.pi.smallPicPath;
+                        $.ajax({
+                            type: 'POST',
+                            url: 'DeleteImage',
+                            data: name,
+                            dataType: 'json'
+                        });
+                    });
+                    file.previewElement.appendChild(removeButton);
+                });
+            }
+        };
 
+//});
 
-    var myDropzone = new Dropzone(document.getElementById("my-awesome-dropzone"), { // Make the whole body a dropzone
-  url: "/target-url", // Set the url
-  thumbnailWidth: 80,
-  thumbnailHeight: 80,
-  parallelUploads: 20,
-  //previewTemplate: previewTemplate,
-  autoQueue: false, // Make sure the files aren't queued until manually added
-  previewsContainer: "#previews", // Define the container to display the previews
-  // clickable: ".fileinput-button" // Define the element that should be used as click trigger to select files.
-});
+document.getElementById('show-log').addEventListener('click', function() {
+    var currDisplay = document.getElementById('log').style.display;
 
-myDropzone.on("addedfile", function(file) {
-  // Hookup the start button
-  file.previewElement.querySelector(".start").onclick = function() { myDropzone.enqueueFile(file); };
-});
-
+    if (currDisplay == 'block') {
+      document.getElementById('log').style.display = 'none';
+    } else {
+      document.getElementById('log').style.display = 'block';
+    }
+    
 });
