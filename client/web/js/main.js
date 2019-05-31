@@ -3,7 +3,7 @@
     Dropzone.options.myAwesomeDropzone = {
             paramName: "file",
             maxFilesize: 10,
-            url: '/encrypt',
+            url: '/crypto/encrypt',
             previewsContainer: "#dropzone-previews",
             uploadMultiple: true,
             parallelUploads: 5,
@@ -48,10 +48,11 @@
 
 document.getElementById('show-log').addEventListener('click', function() {
     var currDisplay = document.getElementById('log').style.display;
-
     if (currDisplay == 'block') {
+      document.getElementById('log-label').style.display = 'none';
       document.getElementById('log').style.display = 'none';
     } else {
+      document.getElementById('log-label').style.display = 'block';
       document.getElementById('log').style.display = 'block';
     }
     

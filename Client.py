@@ -1,14 +1,11 @@
 from Cryptodome.Cipher import AES
 from Cryptodome.Hash import SHA256
 from Cryptodome.Random import random
-from datetime import date, datetime
+from datetime import datetime
 from flask import Flask, request, render_template, Blueprint
 from flask_restplus import Resource, Api
-#from tkinter import *
-#import ClientGUI
-import base64, crypto.Const as Const, crypto.ElGamal as ElGamal, json, os, requests, struct, sys
-import crypto.RSA as rsa
-import crypto.AES as aes
+from crypto import Const, ElGamal, RSA as rsa, AES as aes
+import base64, json, os, requests, struct
 
 # Cryptographic keys
 PubKeyCompany = None
@@ -258,46 +255,67 @@ def decryptFile(encfile, decfile):
     return Const.ERROR
 
 ################# FLASK SERVER #################
-app = Flask(__name__)   #  Create a Flask WSGI application
-api = Api(app)          #  Create a Flask-RESTPlus API
+app = Flask(__name__, template_folder="client/web/templates")   # Create a Flask WSGI application
+api = Api(app)                                                  # Create a Flask-RESTPlus API
 
 crypto_ns = api.namespace('crypto', description='Operations related to data protection')
 log_ns = api.namespace('log', description='Operations related to operations logging')
 
+parser = api.parser()
+parser.add_argument('in_file', type=file, location='file')
+
+@app.route("/index", methods=['GET'])
+def index():
+    return render_template("index.html")
+
 @crypto_ns.route("/encrypt")
 class Encrypt(Resource):
 
-    @api.expect("It needs an HTML form with its enctype attribute set to 'multipart/form-data', posting the file to a URL")
+    @api.expect(parser)
     @api.response(200, "File successfully encrypted")
     @api.response(500, "File encryption failed")
     def post(self):
+        """
+        Encrypt sent file
+        :return: String containing encrypted file
+        """
         f = request.files['file']
         enc_f = encryptFile(f,"enc_"+f)
         if enc_f is Const.ERROR:
             return None, 500
         return enc_f, 200
 
-
 @crypto_ns.route("/decrypt")
 class Decrypt(Resource):
 
-    @api.expect("It needs an HTML form with its enctype attribute set to 'multipart/form-data', posting the file to a URL")
+    @api.expect(parser)
     @api.response(200, "File successfully decrypted")
     @api.response(500, "File decryption failed")
     def post(self):
+        """
+        Decrypt sent file
+        :return: String containing decrypted file
+        """
         f = request.files['file']
         dec_f = decryptFile(f, "dec_" + f)
         if dec_f is Const.ERROR:
             return None, 500
         return dec_f, 200
 
-
 @log_ns.route("/getLog")
 class Log(Resource):
 
-    @api.response(200, "Log successfull")
+    @api.response(200, "Log successfully sent")
+    @api.response(500, "Log sending failed")
     def get(self):
-        return None, 200
+        """
+        Send log data
+        :return: String containing log data
+        """
+        fout = open(Const.LOG+".txt", "r")
+        if fout.mode == "r":
+            return fout.read(), 200
+        return None, 500
 
 def initialize_app(flask_app):
     blueprint = Blueprint('api', __name__, url_prefix='/api')
@@ -308,9 +326,5 @@ def initialize_app(flask_app):
 
 if __name__ == "__main__":
     loadConfig(Const.CLIENT + "_" + Const.CONFIG + '.json')
-    # root = Tk()
-    # gui = ClientGUI.ClientGUI(root)
-    # log("CLIENT: Creating GUI")
-    # root.mainloop()
     initialize_app(app)
     app.run(host=Const.CLIENT_ADDR, port=Const.CLIENT_PORT)

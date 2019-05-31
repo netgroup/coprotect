@@ -9,35 +9,43 @@
         <title></title>
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="apple-touch-icon" href="apple-touch-icon.png">
+        <link rel="apple-touch-icon" href="../apple-touch-icon.png">
 
-        <link rel="stylesheet" href="css/bootstrap.min.css">
+        <link rel="stylesheet" href="../css/bootstrap.min.css">
         <style>
             body {
                 padding-top: 50px;
                 padding-bottom: 20px;
-
             }
             #my-awesome-dropzone {
               width: 100%; 
-              height: 200px;
+              height: 300px;
               border : 3px #AAA dashed;
-              background: url('img/download.png');
+              background: url('../img/download.png');
+              background-size: contain;
+              background-repeat: no-repeat;
+              background-position: center;
+            }
+            #decrypt-dropzone {
+              width: 100%;
+              height: 300px;
+              border : 3px #AAA dashed;
+              background: url('../img/download.png');
               background-size: contain;
               background-repeat: no-repeat;
               background-position: center;
             }
             #log {
               width: 100%; 
-              min-height: 200px;
-
+              height: 300px;
+              overflow: auto;
             }
         </style>
-        <link rel="stylesheet" href="css/bootstrap-theme.min.css">
-        <link rel="stylesheet" href="css/main.css">
+        <link rel="stylesheet" href="../css/bootstrap-theme.min.css">
+        <link rel="stylesheet" href="../css/main.css">
 
-        <script src="js/vendor/modernizr-2.8.3-respond-1.4.2.min.js"></script>
-        <script src="js/dropzone.js"></script>
+        <script src="../js/vendor/modernizr-2.8.3-respond-1.4.2.min.js"></script>
+        <script src="../js/dropzone.js"></script>
 
     </head>
     <body>
@@ -67,7 +75,7 @@
         <p>Coprotect is a new trust management ....</p>
         <p><a class="btn btn-primary btn-lg" href="http://www.bpr4gdpr.eu/" role="button">More info &raquo;</a></p>
 
-        <p><button class="btn btn-info btn-lg" id="show-log">Show log</a></p>
+        <p><a class="btn btn-info btn-lg" id="show-log" role="button">Show log</a></p>
 
       </div>
     </div>
@@ -75,7 +83,7 @@
     <div class="container">
       <!-- Example row of columns -->
       <div class="row">
-        <div class="col-md-6">
+        <div class="col-md-4">
           <h2>Drop file below to encrypt</h2>
           <form action="UploadImages"
                 class="dropzone"
@@ -84,9 +92,17 @@
           <div id="dropzone-previews"></div>
         </div>
 
+        <div class="col-md-4">
+          <h2>Drop file below to decrypt</h2>
+          <form action="UploadImages"
+                class="dropzone"
+                id="decrypt-dropzone" enctype="multipart/form-data">
+          </form>
+          <div id="decrypt-dropzone-previews"></div>
+        </div>
 
-        <div class="col-md-6">
-          <h2>Log</h2>
+        <div class="col-md-4">
+          <h2 id="log-label">Log</h2>
           <div id="log">
               <ul>
                 <li>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</li>
@@ -95,12 +111,6 @@
               </ul>
           </div>
         </div>
-        
-
-
-
-        
-          
 
 
       </div>
@@ -108,16 +118,16 @@
       <hr>
 
       <footer>
-        <p><img src="img/bpr4gdpr_logo.png" /> University of Rome "Tor Vergata"</p>
+        <p><img src="../img/bpr4gdpr_logo.png" /> University of Rome "Tor Vergata"</p>
       </footer>
     </div> <!-- /container -->        
-        <script src="js/vendor/jquery-1.11.2.min.js"></script>
+        <script src="../js/vendor/jquery-1.11.2.min.js"></script>
         
 
-        <script src="js/vendor/bootstrap.min.js"></script>
+        <script src="../js/vendor/bootstrap.min.js"></script>
 
 
-        <script src="js/main.js"></script>
+        <script src="../js/main.js"></script>
 
     </body>
 </html>
