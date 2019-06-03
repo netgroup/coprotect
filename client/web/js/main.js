@@ -21,6 +21,26 @@
                 this.on("sending", function(file, xhr, o) {
                   console.log(file);
                 });
+
+                this.on("drop", function (file) {
+                  formdata = new FormData();
+                  if($(this).prop('files').length > 0) {
+                    file = $(this).prop('files')[0];
+                    formdata.append("file", file);
+                  };
+                  $.ajax({
+                    type: 'POST',
+                    url: '/crypto/encrypt',
+                    data: formdata,
+                    processData: false,
+                    contentType: false,
+                    success: function (result) {
+                         // if all is well
+                         // play the audio file
+                    }
+                  });
+                });
+
                 this.on("complete", function(file, resp) {
                   console.log(resp);
                 });

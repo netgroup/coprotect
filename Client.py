@@ -276,7 +276,7 @@ class Encrypt(Resource):
     @api.response(500, "File encryption failed")
     def post(self):
         """
-        Encrypt sent file
+        Encrypt sent file (it needs a form with enctype as "multipart/form-data" for file sending).
         :return: String containing encrypted file
         """
         f = request.files['file']
@@ -293,7 +293,7 @@ class Decrypt(Resource):
     @api.response(500, "File decryption failed")
     def post(self):
         """
-        Decrypt sent file
+        Decrypt sent file (it needs a form with enctype as "multipart/form-data" for file sending).
         :return: String containing decrypted file
         """
         f = request.files['file']
