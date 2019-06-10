@@ -1,6 +1,8 @@
 FROM ubuntu:16.04
 
 RUN apt-get update && apt-get install -y openssh-server
+RUN apt-get install -y nginx vim
+
 RUN mkdir /var/run/sshd
 RUN echo 'root:root' | chpasswd
 RUN sed -i 's/PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config
@@ -22,6 +24,7 @@ WORKDIR /app
 
 # Copy the current directory contents into the container at /app
 RUN mkdir /app/crypto
+RUN mkdir /app/web
 RUN touch /app/__init__.py
 RUN touch /app/crypto/__init__.py
 COPY ./Client.py /app/
@@ -30,6 +33,22 @@ COPY ./crypto/RSA.py /app/crypto
 COPY ./crypto/AES.py /app/crypto
 COPY ./crypto/Const.py /app/crypto
 COPY ./clear_file.txt /app/
+COPY ./client/web/ /app/web
+
+
+# config NGINX
+#RUN rm -v /etc/nginx/nginx.conf
+#ADD web/nginx.conf /etc/nginx/
+#
+## Append "daemon off;" to the beginning of the configuration
+#RUN echo "daemon off;" >> /etc/nginx/nginx.conf
+#
+## Expose ports
+#EXPOSE 80
+#
+## Set the default command to execute
+## when creating a new container
+#CMD service nginx start
 
 # Install any needed packages specified in requirements.txt
 RUN pip install Flask
