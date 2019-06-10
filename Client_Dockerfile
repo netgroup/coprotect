@@ -24,7 +24,8 @@ WORKDIR /app
 
 # Copy the current directory contents into the container at /app
 RUN mkdir /app/crypto
-RUN mkdir /app/web
+RUN mkdir -p /app/web/static
+RUN mkdir -p /app/web/templates
 RUN touch /app/__init__.py
 RUN touch /app/crypto/__init__.py
 COPY ./Client.py /app/
@@ -33,7 +34,8 @@ COPY ./crypto/RSA.py /app/crypto
 COPY ./crypto/AES.py /app/crypto
 COPY ./crypto/Const.py /app/crypto
 COPY ./clear_file.txt /app/
-COPY ./client/web/ /app/web
+COPY ./client/static/ /app/web/static
+COPY ./client/static/index.html /app/web/templates/
 
 
 # config NGINX
