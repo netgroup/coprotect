@@ -255,7 +255,7 @@ def decryptFile(encfile, decfile):
     return Const.ERROR
 
 ################# FLASK SERVER #################
-app = Flask(__name__, template_folder="web/", static_folder="web/")   # Create a Flask WSGI application
+app = Flask(__name__, template_folder="client/static/", static_folder="client/static")   # Create a Flask WSGI application
 api = Api(app)                                                  # Create a Flask-RESTPlus API
 
 crypto_ns = api.namespace('crypto', description='Operations related to data protection')

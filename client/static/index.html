@@ -11,7 +11,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="apple-touch-icon" href="apple-touch-icon.png">
 
-        <link rel="stylesheet" href="css/bootstrap.min.css">
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.css') }}">
         <style>
             body {
                 padding-top: 50px;
@@ -21,7 +21,7 @@
               width: 100%; 
               height: 300px;
               border : 3px #AAA dashed;
-              background: url('img/download.png');
+              background: href="{{ url_for('static', filename='img/download.png') }}";
               background-size: contain;
               background-repeat: no-repeat;
               background-position: center;
@@ -30,7 +30,7 @@
               width: 100%;
               height: 300px;
               border : 3px #AAA dashed;
-              background: url('img/download.png');
+              background: href="{{ url_for('static', filename='img/download.png') }}";
               background-size: contain;
               background-repeat: no-repeat;
               background-position: center;
@@ -41,11 +41,11 @@
               overflow: auto;
             }
         </style>
-        <link rel="stylesheet" href="css/bootstrap-theme.min.css">
-        <link rel="stylesheet" href="css/main.css">
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap-theme.min.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
 
-        <script src="js/vendor/modernizr-2.8.3-respond-1.4.2.min.js"></script>
-        <script src="js/dropzone.js"></script>
+        <script src="{{ url_for('static', filename='js/vendor/modernizr-2.8.3-respond-1.4.2.min.js') }}"></script>
+        <script src="{{ url_for('static', filename='js/dropzone.js') }}"></script>
 
     </head>
     <body>
@@ -118,16 +118,16 @@
       <hr>
 
       <footer>
-        <p><img src="img/bpr4gdpr_logo.png" /> University of Rome "Tor Vergata"</p>
+        <p><img src="{{ url_for('static', filename='img/bpr4gdpr_logo.png') }}" /> University of Rome "Tor Vergata"</p>
       </footer>
     </div> <!-- /container -->        
-        <script src="js/vendor/jquery-1.11.2.min.js"></script>
+        <script src="{{ url_for('static', filename='js/vendor/jquery-1.11.2.min.js') }}"></script>
         
 
-        <script src="js/vendor/bootstrap.min.js"></script>
+        <script src="{{ url_for('static', filename='js/vendor/bootstrap.min.js') }}"></script>
 
 
-        <script src="js/main.js"></script>
+        <script src="{{ url_for('static', filename='js/main.js') }}"></script>
 
     </body>
 </html>
