@@ -279,7 +279,7 @@ class Encrypt(Resource):
         Encrypt sent file (it needs a form with enctype as "multipart/form-data" for file sending).
         :return: String containing encrypted file
         """
-        f = request.files['file']
+        f = request.files['file'][0]
         enc_f = encryptFile(f,"enc_"+f)
         if enc_f is Const.ERROR:
             return None, 500
@@ -296,7 +296,7 @@ class Decrypt(Resource):
         Decrypt sent file (it needs a form with enctype as "multipart/form-data" for file sending).
         :return: String containing decrypted file
         """
-        f = request.files['file']
+        f = request.files['file'][0]
         dec_f = decryptFile(f, "dec_" + f)
         if dec_f is Const.ERROR:
             return None, 500
