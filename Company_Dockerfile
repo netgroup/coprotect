@@ -22,11 +22,11 @@ WORKDIR /app
 
 # Copy the current directory contents into the container at /app
 COPY ./CompanyServer.py /app/
-COPY ./Const.py /app/
-COPY ./ElGamal.py /app/
-COPY ./PedersenDKG.py /app/
-COPY ./RSA.py /app/
-COPY ./utils/AES.py /app/
+COPY ./crypto/Const.py /app/
+COPY ./crypto/ElGamal.py /app/
+COPY ./crypto/PedersenDKG.py /app/
+COPY ./crypto/RSA.py /app/
+COPY ./crypto/AES.py /app/
 
 # Install any needed packages specified in requirements.txt
 RUN pip install Flask

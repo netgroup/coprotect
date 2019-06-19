@@ -121,7 +121,9 @@ def encryptFile(infile, encfile):
     # Get initialization vector
     iv = aes.getIV()
     aesCipher = AES.new(key, AES.MODE_CBC, iv)
-    fsz = os.path.getsize(infile)
+    # Create temporary plain file
+    infile.save('/tmp/file')
+    fsz = os.stat('/tmp/file').st_size
     # Encrypt header and file data
     with open(encfile, 'wb') as fout:
         # Write header
@@ -132,7 +134,7 @@ def encryptFile(infile, encfile):
         log("CLIENT: Writing encrypted file data")
         fout.write(struct.pack('<Q', fsz))
         fout.write(iv)
-        with open(infile, 'rb') as fin:
+        with open('/tmp/file', 'rb') as fin:
             while True:
                 log("CLIENT: Reading data from input file")
                 data = fin.read(Const.RSA_BITS)
@@ -146,7 +148,7 @@ def encryptFile(infile, encfile):
     saveConfig(Const.CLIENT + "_" + Const.CONFIG + '.json')
     fout = open(encfile, "r")
     if fout.mode == "r":
-        return fout.read()
+        return base64.encodestring(fout.read())
     return Const.ERROR
 
 # Decrypt file
@@ -251,7 +253,7 @@ def decryptFile(encfile, decfile):
                 fsz -= n
     fout = open(decfile, "r")
     if fout.mode == "r":
-        return fout.read()
+        return base64.encodestring(fout.read())
     return Const.ERROR
 
 ################# FLASK SERVER #################
@@ -279,8 +281,10 @@ class Encrypt(Resource):
         Encrypt sent file (it needs a form with enctype as "multipart/form-data" for file sending).
         :return: String containing encrypted file
         """
-        f = request.files['file'][0]
-        enc_f = encryptFile(f,"enc_"+f)
+        f = request.files['file[0]']
+        print "ENCRYPT: Ho ricevuto ", f
+        enc_f = encryptFile(f,"enc_file")
+        print "ENCRUPT: Mando ", enc_f
         if enc_f is Const.ERROR:
             return None, 500
         return enc_f, 200
@@ -296,8 +300,11 @@ class Decrypt(Resource):
         Decrypt sent file (it needs a form with enctype as "multipart/form-data" for file sending).
         :return: String containing decrypted file
         """
-        f = request.files['file'][0]
-        dec_f = decryptFile(f, "dec_" + f)
+        print "DECRYPT: Ricevuta request ", request.files
+        f = request.files['file[0]']
+        print "DECRYPT: Ho ricevuto ", f
+        dec_f = decryptFile(f, "dec_file")
+        print "DECRYPT: Mando ", dec_f
         if dec_f is Const.ERROR:
             return None, 500
         return dec_f, 200
