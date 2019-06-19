@@ -34,7 +34,8 @@
                     //$('.dz-error-mark').hide();
                     console.log(response);
                     console.log(file);
-                    download(atob(response), 'enc_file.txt', 'text/plain');
+                    console.log(atob(response));
+		    download(atob(response), 'enc_file.txt', 'text/plain');
                 });
                 this.on("sending", function(file) {
                   console.log(file);
