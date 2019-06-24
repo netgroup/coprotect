@@ -19,7 +19,7 @@
             }
             #encrypt-dropzone {
               width: 100%; 
-              height: 300px;
+              height: 250px;
               border : 3px #AAA dashed;
               background: url("{{ url_for('static', filename='img/download.png') }}");
               background-size: contain;
@@ -28,7 +28,7 @@
             }
             #decrypt-dropzone {
               width: 100%;
-              height: 300px;
+              height: 250px;
               border : 3px #AAA dashed;
               background: url("{{ url_for('static', filename='img/download.png') }}");
               background-size: contain;
@@ -37,8 +37,9 @@
             }
             #log {
               width: 100%; 
-              height: 300px;
+              height: 250px;
               overflow: auto;
+              font-size: smaller;
             }
         </style>
         <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap-theme.min.css') }}">
@@ -83,7 +84,7 @@
     <div class="container">
       <!-- Example row of columns -->
       <div class="row">
-        <div class="col-md-4">
+        <div class="col-md-3">
           <h2>Drop file below to encrypt</h2>
           <form action="UploadImages"
                 class="dropzone"
@@ -92,7 +93,7 @@
           <div id="encrypt-dropzone-previews"></div>
         </div>
 
-        <div class="col-md-4">
+        <div class="col-md-3">
           <h2>Drop file below to decrypt</h2>
           <form action="UploadImages"
                 class="dropzone"
@@ -101,7 +102,7 @@
           <div id="decrypt-dropzone-previews"></div>
         </div>
 
-        <div class="col-md-4">
+        <div class="col-md-6">
           <h2 id="log-label">Log</h2>
           <div id="log">
               <ul>

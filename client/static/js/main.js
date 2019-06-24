@@ -54,9 +54,17 @@
                     contentType: false
                 });
             });
-            //this.on("complete", function(file, resp) {
-            //  console.log(resp);
-            //});
+            this.on("complete", function(file, resp) {
+                console.log(file);
+                console.log(resp);
+                $.get("/log/getLog", function(data, status){
+                    console.log(data);
+                    console.log(status);
+                    data = data.replace(/ /g, '\u00a0').replace(/\n/g, "<br/>");
+                    data = data.replace(/\t/g, "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
+                    document.getElementById('log').innerHTML = data;
+                });
+            });
             //this.on("addedfile", function(file) {
             //    var removeButton = Dropzone.createElement("<a href=\"#\">Remove file</a>");
             //    var _this = this;
@@ -79,12 +87,12 @@
 
     Dropzone.options.decryptDropzone = {
         paramName: "file",
-        maxFilesize: 10,
+        maxFilesize: 1024,
         url: '/crypto/decrypt',
         previewsContainer: "#decrypt-dropzone-previews",
         uploadMultiple: true,
-        parallelUploads: 5,
-        maxFiles: 20,
+        parallelUploads: 1,
+        maxFiles: 1,
         init: function() {
             this.on("success", function(file, response) {
                 $('.dz-progress').hide();
@@ -110,6 +118,17 @@
                     data: formdata,
                     processData: false,
                     contentType: false
+                });
+            });
+            this.on("complete", function(file, resp) {
+                console.log(file);
+                console.log(resp);
+                $.get("/log/getLog", function(data, status){
+                    console.log(data);
+                    console.log(status);
+                    data = data.replace(/ /g, '\u00a0').replace(/\n/g, "<br/>");
+                    data = data.replace(/\t/g, "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
+                    document.getElementById('log').innerHTML = data;
                 });
             });
             // this.on("addedfile", function(file) {

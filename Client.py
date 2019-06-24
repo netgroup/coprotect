@@ -5,7 +5,7 @@ from datetime import datetime
 from flask import Flask, request, render_template, Blueprint
 from flask_restplus import Resource, Api
 from crypto import Const, ElGamal, RSA as rsa, AES as aes
-import base64, json, os, requests, struct
+import base64, json, os, random, requests, struct
 
 # Cryptographic keys
 PubKeyCompany = None
@@ -92,7 +92,9 @@ def getPubKeyCompany(n, e):
 # Generate random int for asymmetric encryption
 def generateKey():
     global m
-    m = random.randint(1, Const.P - 1)
+    csprng = random.SystemRandom()
+    m = csprng.randint(1, Const.P - 1)
+    # m = random.randint(1, Const.P - 1)
     log("CLIENT: Generated random int for asymmetric encryption")
     return m
 
@@ -149,10 +151,14 @@ def encryptFile(infile, encfile):
     fout = open(encfile, "r")
     if fout.mode == "r":
         result = base64.encodestring(fout.read())
+        log("CLIENT: Successful encryption!")
     else:
         result = Const.ERROR
+        log("CLIENT: Encryption failed!")
+    log("CLIENT: Deleting temporary files")
     os.remove('./tmp/file')
     os.remove(encfile)
+    log("CLIENT: Temporary files deleted")
     return result
 
 # Decrypt file
@@ -265,10 +271,14 @@ def decryptFile(encfile, decfile):
     fout = open(decfile, "r")
     if fout.mode == "r":
         result = base64.encodestring(fout.read())
+        log("CLIENT: Successful decryption!")
     else:
         result = Const.ERROR
+        log("CLIENT: Decryption failed!")
+    log("CLIENT: Deleting temporary files")
     os.remove('./tmp/enc_file')
     os.remove(decfile)
+    log("CLIENT: Temporary files deleted")
     return result
 
 
