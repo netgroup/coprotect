@@ -35,7 +35,7 @@
                 console.log(response);
                 console.log(file);
                 console.log(atob(response));
-                download(atob(response), 'enc_file.txt', 'text/plain');
+                download(response, 'enc_file.txt', 'text/plain');
             });
             this.on("sending", function(file) {
                 console.log(file);
@@ -93,7 +93,7 @@
                 console.log(response);
                 console.log(file);
                 console.log(atob(response));
-                download(atob(response), 'enc_file.txt', 'text/plain');
+                download(atob(response), 'dec_file.txt', 'text/plain');
             });
             this.on("sending", function(file, xhr, o) {
                 console.log(file);

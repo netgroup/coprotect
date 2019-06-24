@@ -114,7 +114,7 @@ def encryptFile(infile, encfile):
     c1, c2 = ElGamal.encrypt(m, pubKeyCompany)
     log("CLIENT: Encrypted random int with ElGamal")
     data = [c1, c2]
-    size = len(bytes(data))
+    # size = len(bytes(data))
     # Get a random key
     key = aes.getKey(m)
     log("CLIENT: Generated key from random int")
@@ -122,19 +122,19 @@ def encryptFile(infile, encfile):
     iv = aes.getIV()
     aesCipher = AES.new(key, AES.MODE_CBC, iv)
     # Create temporary plain file
-    infile.save('/tmp/file')
-    fsz = os.stat('/tmp/file').st_size
+    infile.save('./tmp/file')
+    fsz = os.stat('./tmp/file').st_size
     # Encrypt header and file data
     with open(encfile, 'wb') as fout:
         # Write header
         log("CLIENT: Writing header of encrypted file")
-        fout.write(struct.pack('<Q', size))
+        # fout.write(struct.pack('<Q', size))
         fout.write(str(data))
         # Write file
         log("CLIENT: Writing encrypted file data")
         fout.write(struct.pack('<Q', fsz))
         fout.write(iv)
-        with open('/tmp/file', 'rb') as fin:
+        with open('./tmp/file', 'rb') as fin:
             while True:
                 log("CLIENT: Reading data from input file")
                 data = fin.read(Const.RSA_BITS)
@@ -148,30 +148,41 @@ def encryptFile(infile, encfile):
     saveConfig(Const.CLIENT + "_" + Const.CONFIG + '.json')
     fout = open(encfile, "r")
     if fout.mode == "r":
-        return base64.encodestring(fout.read())
-    return Const.ERROR
+        result = base64.encodestring(fout.read())
+    else:
+        result = Const.ERROR
+    os.remove('./tmp/file')
+    os.remove(encfile)
+    return result
 
 # Decrypt file
 def decryptFile(encfile, decfile):
     log("CLIENT: DECRYPTION REQUESTED")
+    with open('./tmp/enc_file', 'w') as fout:
+        fout.write(base64.decodestring(encfile.read()))
     # Decrypt file
-    with open(encfile, 'rb') as fin:
+    with open("./tmp/enc_file", 'rb') as fin:
         # Read size of plain text
         log("CLIENT: Reading header file")
-        size = struct.unpack('<Q', fin.read(struct.calcsize('<Q')))[0]
-        data = ""
-        while size > 0:
+        # size = struct.unpack('<Q', fin.read(struct.calcsize('<Q')))[0]
+        # data = ""
+        # while size > 0:
+        readBytes = fin.read(1)
+        data = readBytes
+        while readBytes != ']':
             # Read encrypted data from file
-            readBytes = fin.read(size)
-            n = len(readBytes)
-            if n == 0:
-                break
-            # Decrypy data
-            if size > n:
-                data += readBytes
-            else:
-                data += readBytes[:size]  # Remove padding on last block
-            size -= n
+            # readBytes = fin.read(size)
+            readBytes = fin.read(1)
+            # n = len(readBytes)
+            # if n == 0:
+            #     break
+            # # Decrypy data
+            # if size > n:
+            #     data += readBytes
+            # else:
+            #     data += readBytes[:size]  # Remove padding on last block
+            # size -= n
+            data += readBytes
         # Get fields from decrypted data
         log("CLIENT: Getting encrypted fields")
         data = data.split()
@@ -253,8 +264,13 @@ def decryptFile(encfile, decfile):
                 fsz -= n
     fout = open(decfile, "r")
     if fout.mode == "r":
-        return base64.encodestring(fout.read())
-    return Const.ERROR
+        result = base64.encodestring(fout.read())
+    else:
+        result = Const.ERROR
+    os.remove('./tmp/enc_file')
+    os.remove(decfile)
+    return result
+
 
 ################# FLASK SERVER #################
 app = Flask(__name__, root_path='/app/web') #template_folder="/app/static", static_folder="static")   # Create a Flask WSGI application
@@ -282,9 +298,7 @@ class Encrypt(Resource):
         :return: String containing encrypted file
         """
         f = request.files['file[0]']
-        print "ENCRYPT: Ho ricevuto ", f
         enc_f = encryptFile(f,"enc_file")
-        print "ENCRUPT: Mando ", enc_f
         if enc_f is Const.ERROR:
             return None, 500
         return enc_f, 200
@@ -300,11 +314,8 @@ class Decrypt(Resource):
         Decrypt sent file (it needs a form with enctype as "multipart/form-data" for file sending).
         :return: String containing decrypted file
         """
-        print "DECRYPT: Ricevuta request ", request.files
         f = request.files['file[0]']
-        print "DECRYPT: Ho ricevuto ", f
         dec_f = decryptFile(f, "dec_file")
-        print "DECRYPT: Mando ", dec_f
         if dec_f is Const.ERROR:
             return None, 500
         return dec_f, 200

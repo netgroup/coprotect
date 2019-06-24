@@ -26,6 +26,7 @@ WORKDIR /app
 RUN mkdir /app/crypto
 RUN mkdir -p /app/web/static
 RUN mkdir -p /app/web/templates
+RUN mkdir /app/tmp
 RUN touch /app/__init__.py
 RUN touch /app/crypto/__init__.py
 COPY ./Client.py /app/

@@ -5,6 +5,13 @@ Follow these steps to launch docker containers for simulate application:
     2.3) Execute command "docker run -ti [Client only: -e DISPLAY=$DISPLAY] --name [CONTAINER_NAME] [IMAGE_NAME]"
 
 ######
+Running the cloud provider app
+
+docker build -f CloudProvider_Dockerfile -t cloudprovider:v0.1 .
+docker run -ti --name cloudprovider cloudprovider:v0.1
+
+
+
 Running the company app
 
 docker build -f Company_Dockerfile -t company:v0.1 .
