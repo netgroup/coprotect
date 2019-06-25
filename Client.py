@@ -54,7 +54,7 @@ def loadConfig(infile):
 def getPubKeyCompany(n, e):
     global PubKeyCompany, CloudProviderPubKeyN, CloudProviderPubKeyE, CompanyPubKeyN, CompanyPubKeyE
     if PubKeyCompany is None:
-        log("CLIENT: COMPANY PUBLIC KEY")
+        log("CLIENT: RETRIEVING COMPANY PUBLIC KEY")
         # Create signature for sent data
         sign = rsa.generateSign([str(n), str(e)], Const.CLIENT)
         data = json.dumps({Const.NE: n, Const.E: e, Const.SIGN: sign})
@@ -105,7 +105,7 @@ def encryptFile(infile, encfile):
     if ClientPubKeyN is None:
         # Get public and private keys for asymmetric encryption
         ClientPubKeyN, ClientPubKeyE = rsa.createRSAKeys(Const.CLIENT)
-        log("CLIENT: Generated RSA keys")
+        #log("CLIENT: Generated RSA keys")
     # Get public organization key
     pubKeyCompany = getPubKeyCompany(ClientPubKeyN, ClientPubKeyE)
     if pubKeyCompany is Const.BAD_REQ or pubKeyCompany is Const.NO_METHOD or pubKeyCompany is Const.ERROR:
@@ -169,7 +169,7 @@ def decryptFile(encfile, decfile):
     # Decrypt file
     with open("./tmp/enc_file", 'rb') as fin:
         # Read size of plain text
-        log("CLIENT: Reading header file")
+        log("CLIENT: Reading file header")
         # size = struct.unpack('<Q', fin.read(struct.calcsize('<Q')))[0]
         # data = ""
         # while size > 0:

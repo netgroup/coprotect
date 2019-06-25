@@ -73,7 +73,7 @@ app = Flask(__name__)
 def companyPubKey():
     if request.method == 'POST':
         global PubKeyCompany
-        logMessage = "CLOUD PROVIDER: Company public key request\n"
+        logMessage = "CLOUD PROVIDER: Company public key request received\n"
         content = request.get_json(force=True)
         clientPubKeyN = (long)(content[Const.NE])
         clientPubKeyE = (long)(content[Const.E])
