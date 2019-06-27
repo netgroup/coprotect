@@ -34,25 +34,28 @@
                 $('.dz-error-mark').hide();
                 console.log(response);
                 console.log(file);
-                console.log(atob(response));
                 download(response, 'enc_file.txt', 'text/plain');
             });
             this.on("sending", function(file) {
                 console.log(file);
             });
             this.on("drop", function (file) {
-                formdata = new FormData();
-                if($(this).prop('files').length > 0) {
-                    file = $(this).prop('files')[0];
-                    formdata.append("file", file);
-                };
-                $.ajax({
-                    type: 'POST',
-                    url: '/crypto/encrypt',
-                    data: formdata,
-                    processData: false,
-                    contentType: false
-                });
+                console.log(file);
+                // formdata = new FormData();
+                // console.log("drop event");
+                // // if($(this).prop('files').length > 0) {
+                // //     file = $(this).prop('files')[0];
+                //     console.log('File: '+file.dataTransfer.files[0]);
+                //     formdata.append("file", file);
+                // // }
+                // $.ajax({
+                //     type: 'POST',
+                //     url: '/crypto/encrypt',
+                //     data: formdata,
+                //     processData: false,
+                //     contentType: false
+                // });
+
             });
             this.on("complete", function(file, resp) {
                 console.log(file);
@@ -65,7 +68,8 @@
                     document.getElementById('log').innerHTML = data;
                 });
             });
-            //this.on("addedfile", function(file) {
+            this.on("addedfile", function(file) {
+                console.log(file.name);
             //    var removeButton = Dropzone.createElement("<a href=\"#\">Remove file</a>");
             //    var _this = this;
             //    removeButton.addEventListener("click", function(e) {
@@ -81,7 +85,7 @@
             //        });
             //    });
             //    file.previewElement.appendChild(removeButton);
-            //});
+            });
         }
     };
 
@@ -107,18 +111,18 @@
                 console.log(file);
             });
             this.on("drop", function (file) {
-                formdata = new FormData();
-                if($(this).prop('files').length > 0) {
-                    file = $(this).prop('files')[0];
-                    formdata.append("file", file);
-                };
-                $.ajax({
-                    type: 'POST',
-                    url: '/crypto/decrypt',
-                    data: formdata,
-                    processData: false,
-                    contentType: false
-                });
+                // formdata = new FormData();
+                // if($(this).prop('files').length > 0) {
+                //     file = $(this).prop('files')[0];
+                //     formdata.append("file", file);
+                // };
+                // $.ajax({
+                //     type: 'POST',
+                //     url: '/crypto/decrypt',
+                //     data: formdata,
+                //     processData: false,
+                //     contentType: false
+                // });
             });
             this.on("complete", function(file, resp) {
                 console.log(file);

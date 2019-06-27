@@ -41,5 +41,5 @@ RUN pip install pycryptodomex
 #ENV NAME World
 
 # Run app.py when the container launches
-#CMD ["python", "CompanyServer.py"]
-CMD ["bash"]
+CMD ["python", "CompanyServer.py"]
+#CMD ["bash"]

@@ -41,6 +41,6 @@ EXPOSE 5000
 #ENV NAME World
 
 # Run app.py when the container launches
-#CMD ["python", "CloudProviderServer.py"]
+CMD ["python", "CloudProviderServer.py"]
 #CMD ["gunicorn", "-b", "172.17.0.2:5000", "AIPServer"]
-CMD ["bash"]
+#CMD ["bash"]

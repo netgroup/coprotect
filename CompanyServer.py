@@ -24,9 +24,9 @@ def decryptData(data, clientPubKeyN, clientPubKeyE):
     sign = base64.decodestring(data[Const.SIGN])
     message = rsa.generateMessageForSign([str(clientPubKeyN), str(clientPubKeyE), str(c1), str(c2)])
     # Verify signature
-    logMessage += "\t\t\t\t\t\t\t\tCOMPANY: Verifying request signature\n"
+    logMessage += "                                        COMPANY: Verifying request signature\n"
     if rsa.verifySign([clientPubKeyN, clientPubKeyE], message, sign) is True:
-        logMessage += "\t\t\t\t\t\t\t\tCOMPANY: Request signature verified\n\t\t\t\t\t\t\t\tCOMPANY: Recovering Company private key share\n"
+        logMessage += "                                        COMPANY: Request signature verified\n                                        COMPANY: Recovering Company private key share\n"
         dkg1 = PedersenDKG(Const.CLIENT_DKG_ID1, poly1)
         dkg2 = PedersenDKG(Const.CLIENT_DKG_ID2, poly2)
         dkg1.compute_fullShare(otherShares1)
@@ -38,11 +38,11 @@ def decryptData(data, clientPubKeyN, clientPubKeyE):
         dkg1.compute_delta([Const.CLOUD_PROVIDER_DKG_ID])
         dkg1.compute_privKeyShare()
         # Decrypt data
-        logMessage += "\t\t\t\t\t\t\t\tCOMPANY: Company private key share built\n\t\t\t\t\t\t\t\tCOMPANY: Decrypting data\n"
+        logMessage += "                                        COMPANY: Company private key share built\n                                        COMPANY: Decrypting data\n"
         m = ElGamal.decrypt(c1, c2, dkg1.s)
         return m, logMessage
     else:
-        logMessage += "\t\t\t\t\t\t\t\tCOMPANY: Error in signature!"
+        logMessage += "                                        COMPANY: Error in signature!"
         return Const.BAD_REQ, logMessage
 
 # Encrypt data for client
@@ -110,7 +110,7 @@ def decrypt():
         if m is Const.BAD_REQ:
             return Const.BAD_REQ
         m = str(m)
-        message += "\t\t\t\t\t\t\t\tCOMPANY: Partial decryption successful"
+        message += "                                        COMPANY: Partial decryption successful"
         sign = rsa.generateSign([m], Const.COMPANY)
         #m = encryptClientData(m, clientPubKeyN, clientPubKeyE)
         return json.dumps({Const.M: m, Const.LOG: message, Const.SIGN: sign})
