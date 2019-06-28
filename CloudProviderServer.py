@@ -26,32 +26,32 @@ def setPedersenDKG(share1, share2, companyPubShare):
 # Decrypt data received from client obtaining a partial decryption
 def decryptData(data, clientPubKeyN, clientPubKeyE):
     global dkg, otherShares, PubKeyCompany
-    logMessage = "CLOUD PROVIDER: Starting decryption\n"
+    logMessage = Const.getCurrentTime()+"CLOUD PROVIDER: Starting decryption\n"
     c1 = long(data[Const.C1])
     c2 = long(data[Const.C2])
     sign = base64.decodestring(data[Const.SIGN])
     message = rsa.generateMessageForSign([str(clientPubKeyN), str(clientPubKeyE), str(int(c1)), str(int(c2))])
     # Verify signature
-    logMessage += "                                        CLOUD PROVIDER: Verifying request signature\n"
+    logMessage += (Const.getCurrentTime()+"CLOUD PROVIDER: Verifying request signature\n")
     if rsa.verifySign([clientPubKeyN, clientPubKeyE], message, sign) is True:
-        logMessage += "                                        CLOUD PROVIDER: Request signature verified\n                                        CLOUD PROVIDER: Recovering Company private key share\n"
+        logMessage += (Const.getCurrentTime()+"CLOUD PROVIDER: Request signature verified\n"+Const.getCurrentTime()+"CLOUD PROVIDER: Recovering Company private key share\n")
         dkg = PedersenDKG(Const.CLOUD_PROVIDER_DKG_ID, poly)
         dkg.compute_fullShare(otherShares)
         dkg.setPubKey(PubKeyCompany)
         dkg.compute_delta([Const.CLIENT_DKG_ID1])
         dkg.compute_privKeyShare()
         # Partial decryption
-        logMessage += "                                        CLOUD PROVIDER: Company private key share built\n                                        CLOUD PROVIDER: Decrypting data\n"
+        logMessage += (Const.getCurrentTime()+"CLOUD PROVIDER: Company private key share built\n"+Const.getCurrentTime()+"CLOUD PROVIDER: Decrypting data\n")
         m = ElGamal.decrypt(c1, c2, dkg.s)
         return m, logMessage
     else:
-        logMessage += "                                        COMPANY: Error in signature!"
+        logMessage += (Const.getCurrentTime()+"COMPANY: Error in signature!")
         return Const.BAD_REQ, logMessage
 
 # Send to client company public key
 def sendPubKeyCompany(key, logMessage):
     global CloudProviderPubKeyN, CloudProviderPubKeyE, CompanyPubKeyN, CompanyPubKeyE
-    logMessage += "                                        CLOUD PROVIDER: Sending Company public key"
+    logMessage += (Const.getCurrentTime()+"CLOUD PROVIDER: Sending Company public key\n")
     sign = rsa.generateSign(
         [str(key), str(CompanyPubKeyN), str(CompanyPubKeyE), str(CloudProviderPubKeyN), str(CloudProviderPubKeyE)],
         Const.CLOUD_PROVIDER)
@@ -73,16 +73,16 @@ app = Flask(__name__)
 def companyPubKey():
     if request.method == 'POST':
         global PubKeyCompany
-        logMessage = "CLOUD PROVIDER: Company public key request received\n"
+        logMessage = Const.getCurrentTime()+"CLOUD PROVIDER: Company public key request received\n"
         content = request.get_json(force=True)
         clientPubKeyN = (long)(content[Const.NE])
         clientPubKeyE = (long)(content[Const.E])
         sign = base64.decodestring(content[Const.SIGN])
         message = rsa.generateMessageForSign([str(clientPubKeyN), str(clientPubKeyE)])
         # Verify signature
-        logMessage += "                                        CLOUD PROVIDER: Verifying request signature"
+        logMessage += (Const.getCurrentTime()+"CLOUD PROVIDER: Verifying request signature\n")
         if rsa.verifySign([clientPubKeyN, clientPubKeyE], message, sign) is True:
-            logMessage += "\n                                        CLOUD PROVIDER: Request signature verified\n"
+            logMessage += (Const.getCurrentTime()+"CLOUD PROVIDER: Request signature verified\n")
             # Send company public key
             response = sendPubKeyCompany(PubKeyCompany, logMessage)
             return response
@@ -151,7 +151,7 @@ def decrypt():
         if m is Const.BAD_REQ:
             return Const.BAD_REQ
         m = str(m)
-        message += "                                        CLOUD PROVIDER: Partial decryption successful"
+        message += (Const.getCurrentTime()+"CLOUD PROVIDER: Partial decryption successful")
         sign = rsa.generateSign([m], Const.CLOUD_PROVIDER)
         #m = encryptClientData(m, clientPubKeyN, clientPubKeyE)
         return json.dumps({Const.M: m, Const.LOG: message, Const.SIGN: sign})

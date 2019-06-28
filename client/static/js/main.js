@@ -28,13 +28,16 @@
         parallelUploads: 1,
         maxFiles: 1,
         init: function() {
+            var file_name = 'file';
+            var file_ext = '.txt';
+            var file_type = 'text/plain';
             this.on("success", function(file, response) {
                 $('.dz-progress').hide();
                 $('.dz-size').hide();
                 $('.dz-error-mark').hide();
                 console.log(response);
                 console.log(file);
-                download(response, 'enc_file.txt', 'text/plain');
+                download(response, 'enc_'+file_name+file_ext, file_type);
             });
             this.on("sending", function(file) {
                 console.log(file);
@@ -69,7 +72,10 @@
                 });
             });
             this.on("addedfile", function(file) {
-                console.log(file.name);
+                file_splits = file.name.split('.');
+                file_name = file_splits[0];
+                file_ext = "."+file_splits[1];
+                file_type = file.type;
             //    var removeButton = Dropzone.createElement("<a href=\"#\">Remove file</a>");
             //    var _this = this;
             //    removeButton.addEventListener("click", function(e) {
@@ -98,6 +104,9 @@
         parallelUploads: 1,
         maxFiles: 1,
         init: function() {
+            var file_name = 'file';
+            var file_ext = '.txt';
+            var file_type = 'text/plain';
             this.on("success", function(file, response) {
                 $('.dz-progress').hide();
                 $('.dz-size').hide();
@@ -105,7 +114,7 @@
                 console.log(response);
                 console.log(file);
                 console.log(atob(response));
-                download(atob(response), 'dec_file.txt', 'text/plain');
+                download(atob(response), 'dec_'+file_name+file_ext, file_type);
             });
             this.on("sending", function(file, xhr, o) {
                 console.log(file);
@@ -135,7 +144,11 @@
                     document.getElementById('log').innerHTML = data;
                 });
             });
-            // this.on("addedfile", function(file) {
+            this.on("addedfile", function(file) {
+                file_splits = file.name.split('.');
+                file_name = file_splits[0];
+                file_ext = "."+file_splits[1];
+                file_type = file.type;
             //     var removeButton = Dropzone.createElement("<a href=\"#\">Remove file</a>");
             //     var _this = this;
             //     removeButton.addEventListener("click", function(e) {
@@ -151,7 +164,7 @@
             //         });
             //     });
             //     file.previewElement.appendChild(removeButton);
-            // });
+            });
         }
     };
 

@@ -18,15 +18,15 @@ protShare = None
 # Decrypt data received from Cloud Provider obtaining full decryption
 def decryptData(data, clientPubKeyN, clientPubKeyE):
     global dkg1, dkg2, otherShares1, otherShares2, PubKeyCompany
-    logMessage = "COMPANY: Starting decryption\n"
+    logMessage = Const.getCurrentTime()+"COMPANY: Starting decryption\n"
     c1 = (int)(data[Const.C1])
     c2 = (int)(data[Const.C2])
     sign = base64.decodestring(data[Const.SIGN])
     message = rsa.generateMessageForSign([str(clientPubKeyN), str(clientPubKeyE), str(c1), str(c2)])
     # Verify signature
-    logMessage += "                                        COMPANY: Verifying request signature\n"
+    logMessage += (Const.getCurrentTime()+"COMPANY: Verifying request signature\n")
     if rsa.verifySign([clientPubKeyN, clientPubKeyE], message, sign) is True:
-        logMessage += "                                        COMPANY: Request signature verified\n                                        COMPANY: Recovering Company private key share\n"
+        logMessage += (Const.getCurrentTime()+"COMPANY: Request signature verified\n"+Const.getCurrentTime()+"COMPANY: Recovering Company private key share\n")
         dkg1 = PedersenDKG(Const.CLIENT_DKG_ID1, poly1)
         dkg2 = PedersenDKG(Const.CLIENT_DKG_ID2, poly2)
         dkg1.compute_fullShare(otherShares1)
@@ -38,11 +38,11 @@ def decryptData(data, clientPubKeyN, clientPubKeyE):
         dkg1.compute_delta([Const.CLOUD_PROVIDER_DKG_ID])
         dkg1.compute_privKeyShare()
         # Decrypt data
-        logMessage += "                                        COMPANY: Company private key share built\n                                        COMPANY: Decrypting data\n"
+        logMessage += (Const.getCurrentTime()+"COMPANY: Company private key share built\n"+Const.getCurrentTime()+"COMPANY: Decrypting data\n")
         m = ElGamal.decrypt(c1, c2, dkg1.s)
         return m, logMessage
     else:
-        logMessage += "                                        COMPANY: Error in signature!"
+        logMessage += (Const.getCurrentTime()+"COMPANY: Error in signature!\n")
         return Const.BAD_REQ, logMessage
 
 # Encrypt data for client
@@ -110,7 +110,7 @@ def decrypt():
         if m is Const.BAD_REQ:
             return Const.BAD_REQ
         m = str(m)
-        message += "                                        COMPANY: Partial decryption successful"
+        message += (Const.getCurrentTime()+"COMPANY: Partial decryption successful\n")
         sign = rsa.generateSign([m], Const.COMPANY)
         #m = encryptClientData(m, clientPubKeyN, clientPubKeyE)
         return json.dumps({Const.M: m, Const.LOG: message, Const.SIGN: sign})
