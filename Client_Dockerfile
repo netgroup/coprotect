@@ -67,5 +67,5 @@ EXPOSE 5002
 #ENV NAME World
 
 # Run app.py when the container launches
-CMD ["python", "Client.py", "clear_file.txt", "dec_file.txt"]
+CMD ["python", "Client.py"]
 #CMD ["bash"]

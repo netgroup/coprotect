@@ -153,14 +153,17 @@ def encryptFile(infile):
     saveConfig(Const.CLIENT + "_" + Const.CONFIG + '.json')
     fout = open(encfile, "rb")
     if fout.mode == "rb":
-        result = base64.encodestring(fout.read())
+        f = fout.read()
+        result = base64.encodestring(f)
+        print "RESULT: ", len(f), " (in base64", len(result), ") ", f
+        # result = base64.encodestring(fout.read())
         log(Const.getCurrentTime()+"CLIENT: Successful encryption!\n")
     else:
         result = Const.ERROR
         log(Const.getCurrentTime()+"CLIENT: Encryption failed!\n")
     log(Const.getCurrentTime()+"CLIENT: Deleting temporary files\n")
-    os.remove(tmp_path)
-    os.remove(encfile)
+    # os.remove(tmp_path)
+    # os.remove(encfile)
     log(Const.getCurrentTime()+"CLIENT: Temporary files deleted\n")
     return result
 
@@ -173,7 +176,11 @@ def decryptFile(encfile):
     tmp_path = './tmp/' + file_name
     decfile = 'dec_' + file_name
     with open(tmp_path, 'wb') as fout:
-        fout.write(base64.decodestring(encfile.read()))
+        f = encfile.read()
+        s = base64.decodestring(f)
+        print "File cifrato lungo:", len(f), " (in base64 ", len(s), ")"
+        # fout.write(base64.decodestring(encfile.read()))
+        fout.write(base64.decodestring(f))
     # Decrypt file
     with open(tmp_path, 'rb') as fin:
         # Read size of plain text
