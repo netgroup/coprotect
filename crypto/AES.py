@@ -6,7 +6,7 @@ from Cryptodome.Random import random
 def getKey(m):
     m_bytes = "".join(chr((m >> (i * 8)) & 0xFF) for i in range(AES.block_size))
     key = SHA256.new(data=m_bytes)
-    return key.hexdigest()[:32]
+    return key.digest()
 
 # Generate initialization vector for AES
 def getIV():
