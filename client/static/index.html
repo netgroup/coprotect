@@ -36,10 +36,15 @@
               background-position: center;
             }
             #log {
-              width: 100%; 
-              height: 250px;
+              width: 100%;
+              height: 280px;
               overflow: auto;
               font-size: smaller;
+            }
+            #show-log {
+              position: relative;
+              left: 10px;
+              top: 20px;
             }
         </style>
         <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap-theme.min.css') }}">
@@ -74,10 +79,10 @@
       <div class="container">
         <h1>Coprotect</h1>
         <p>A novel architecture to protect the cryptography keys in cloud systems that leverage on the cooperation
-            between the cloud provider and the customer company.</p>
-        <p><a class="btn btn-primary btn-lg" href="http://www.bpr4gdpr.eu/" role="button">More info &raquo;</a></p>
+            between the cloud provider and the customer company. It takes part in the European BPR4GDPR project.</p>
+        <p><a class="btn btn-primary btn-lg" href="http://www.bpr4gdpr.eu/" role="button">About BPR4GDPR &raquo;</a></p>
 
-        <p><a class="btn btn-info btn-lg" id="show-log" role="button">Show log</a></p>
+<!--        <p><a class="btn btn-info btn-lg" id="show-log" role="button">Show log</a></p>-->
 
       </div>
     </div>
@@ -104,16 +109,18 @@
         </div>
 
         <div class="col-md-6">
-          <h2 id="log-label">Log</h2>
-          <div id="log">
-              <ul>
-                <li>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</li>
-                <li>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</li>
-                <li>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</li>
-              </ul>
+          <div class="row">
+              <h2 id="log-label">Log</h2>
+              <div id="log">
+                  <ul>
+                      <li>Log will be shown after first encryption/decryption operation.</li>
+                  </ul>
+              </div>
           </div>
         </div>
-
+        <div class="row">
+          <p><a class="btn btn-info btn-lg" id="show-log" role="button">Show log</a></p>
+        </div>
 
       </div>
 

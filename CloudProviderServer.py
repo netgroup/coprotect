@@ -151,7 +151,7 @@ def decrypt():
         if m is Const.BAD_REQ:
             return Const.BAD_REQ
         m = str(m)
-        message += (Const.getCurrentTime()+"CLOUD PROVIDER: Partial decryption successful")
+        message += (Const.getCurrentTime()+"CLOUD PROVIDER: Partial decryption successful\n")
         sign = rsa.generateSign([m], Const.CLOUD_PROVIDER)
         #m = encryptClientData(m, clientPubKeyN, clientPubKeyE)
         return json.dumps({Const.M: m, Const.LOG: message, Const.SIGN: sign})

@@ -40,6 +40,9 @@
                 $('.dz-error-mark').hide();
                 console.log(response);
                 console.log(file);
+                console.log(file_ext);
+                console.log(file_name);
+                console.log(file_type);
                 download(response, 'enc_'+file_name+file_ext, file_type);
             });
             this.on("sending", function(file) {
@@ -75,9 +78,13 @@
                 });
             });
             this.on("addedfile", function(file) {
-                file_splits = file.name.split('.');
+                var file_splits = file.name.split('.');
                 file_name = file_splits[0];
-                file_ext = "."+file_splits[1];
+                if(file_splits.length === 1)
+                    file_ext = "";
+                else
+                    file_ext = "."+file_splits[1];
+                console.log(file_ext);
                 file_type = file.type;
             //    var removeButton = Dropzone.createElement("<a href=\"#\">Remove file</a>");
             //    var _this = this;
@@ -148,9 +155,12 @@
                 });
             });
             this.on("addedfile", function(file) {
-                file_splits = file.name.split('.');
+                var file_splits = file.name.split('.');
                 file_name = file_splits[0];
-                file_ext = "."+file_splits[1];
+                if(file_splits.length === 1)
+                    file_ext = "";
+                else
+                    file_ext = "."+file_splits[1];
                 file_type = file.type;
             //     var removeButton = Dropzone.createElement("<a href=\"#\">Remove file</a>");
             //     var _this = this;
@@ -178,9 +188,11 @@ document.getElementById('show-log').addEventListener('click', function() {
     if (currDisplay == 'block') {
       document.getElementById('log-label').style.display = 'none';
       document.getElementById('log').style.display = 'none';
+      document.getElementById('show-log').innerText = 'Show log';
     } else {
       document.getElementById('log-label').style.display = 'block';
       document.getElementById('log').style.display = 'block';
+      document.getElementById('show-log').innerText = 'Hide log';
     }
     
 });
