@@ -25,6 +25,7 @@ COPY ./CloudProviderServer.py /app/
 COPY ./crypto/Const.py /app/
 COPY ./crypto/ElGamal.py /app/
 COPY ./crypto/PedersenDKG.py /app/
+COPY ./crypto/AES.py /app/
 COPY ./crypto/RSA.py /app/
 
 # Install any needed packages specified in requirements.txt

@@ -1,5 +1,5 @@
-from Cryptodome.Random import random
-import Const, ElGamal
+#from Cryptodome.Random import random
+import Const, ElGamal, random
 
 class PedersenDKG:
 
@@ -18,8 +18,9 @@ class PedersenDKG:
     # Create random polynomial
     def create_polynomial(self, degree, mod):
         self.poly = []
+        csprng = random.SystemRandom()
         for i in range(degree):
-            self.poly.append(random.randint(1, mod-1))
+            self.poly.append(csprng.randint(1, mod-1))
 
     # Compute partial shares
     def compute_shares(self, coeff, max_degree, num, mod):
@@ -58,12 +59,17 @@ class PedersenDKG:
     def compute_privKeyShare(self):
         self.s = (long)(ElGamal.mulmod(self.y, self.delta, Const.Q))
 
+    # Set shares
+    def setFullShare(self, share):
+        self.y = share
+
     # Class constructor
-    def __init__(self, id, poly):
+    def __init__(self, id, poly, isNew=True):
         self.setParams(id)
-        if poly is not None:
-            self.poly = poly
-        else:
-            self.create_polynomial(Const.T, Const.Q)
-        self.compute_shares(self.poly, Const.T, Const.N, Const.Q)
-        self.compute_pubKeyShare(Const.G, self.poly[0])
+        if isNew is not False:
+            if poly is not None:
+                self.poly = poly
+            else:
+                self.create_polynomial(Const.T, Const.Q)
+            self.compute_shares(self.poly, Const.T, Const.N, Const.Q)
+            self.compute_pubKeyShare(Const.G, self.poly[0])

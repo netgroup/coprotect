@@ -1,7 +1,9 @@
 from flask import Flask, request
+from Cryptodome.Cipher import AES
 from PedersenDKG import PedersenDKG
 import base64, Const, ElGamal, json, requests
 import RSA as rsa
+import AES as aes
 
 # Cryptographic keys and shares
 CloudProviderPubKeyN = None
@@ -34,14 +36,45 @@ def decryptData(data, clientPubKeyN, clientPubKeyE):
     # Verify signature
     logMessage += (Const.getCurrentTime()+"CLOUD PROVIDER: Verifying request signature\n")
     if rsa.verifySign([clientPubKeyN, clientPubKeyE], message, sign) is True:
-        logMessage += (Const.getCurrentTime()+"CLOUD PROVIDER: Request signature verified\n"+Const.getCurrentTime()+"CLOUD PROVIDER: Recovering Company private key share\n")
+        logMessage += (Const.getCurrentTime()+"CLOUD PROVIDER: Request signature verified\n"+Const.getCurrentTime()+"CLOUD PROVIDER: Recovering Cloud Provider private key share\n")
         dkg = PedersenDKG(Const.CLOUD_PROVIDER_DKG_ID, poly)
         dkg.compute_fullShare(otherShares)
         dkg.setPubKey(PubKeyCompany)
-        dkg.compute_delta([Const.CLIENT_DKG_ID1])
+        dkg.compute_delta([Const.COMPANY_DKG_ID1])
         dkg.compute_privKeyShare()
         # Partial decryption
-        logMessage += (Const.getCurrentTime()+"CLOUD PROVIDER: Company private key share built\n"+Const.getCurrentTime()+"CLOUD PROVIDER: Decrypting data\n")
+        logMessage += (Const.getCurrentTime()+"CLOUD PROVIDER: Cloud Provider private key share built\n"+Const.getCurrentTime()+"CLOUD PROVIDER: Decrypting data\n")
+        m = ElGamal.decrypt(c1, c2, dkg.s)
+        return m, logMessage
+    else:
+        logMessage += (Const.getCurrentTime()+"COMPANY: Error in signature!")
+        return Const.BAD_REQ, logMessage
+
+# Decrypt data received from client obtaining a partial decryption
+def decryptData2(data, clientPubKeyN, clientPubKeyE):
+    global dkg, otherShares, PubKeyCompany
+    logMessage = Const.getCurrentTime()+"CLOUD PROVIDER: Starting decryption\n"
+    c1 = long(data[Const.C1])
+    c2 = long(data[Const.C2])
+    password = str(data[Const.PASSWORD])
+    iv = base64.decodestring(data[Const.IV])
+    sign = base64.decodestring(data[Const.SIGN])
+    message = rsa.generateMessageForSign([str(clientPubKeyN), str(clientPubKeyE), str(int(c1)), str(int(c2)), password, iv])
+    # Verify signature
+    logMessage += (Const.getCurrentTime()+"CLOUD PROVIDER: Verifying request signature\n")
+    if rsa.verifySign([clientPubKeyN, clientPubKeyE], message, sign) is True:
+        logMessage += (Const.getCurrentTime()+"CLOUD PROVIDER: Request signature verified\n"+Const.getCurrentTime()+"CLOUD PROVIDER: Recovering protected shared key fragment\n")
+        # Decrypt protected shared fragment
+        key = aes.getKey(int(password))
+        aesCipher = AES.new(key, AES.MODE_CBC, iv)
+        share = int(aes.decrypt(aesCipher, protShare))
+        dkg = PedersenDKG(Const.COMPANY_DKG_ID2, None, False)
+        dkg.setFullShare(share)
+        dkg.setPubKey(PubKeyCompany)
+        dkg.compute_delta([Const.COMPANY_DKG_ID1])
+        dkg.compute_privKeyShare()
+        # Partial decryption using protected shared fragment
+        logMessage += (Const.getCurrentTime()+"CLOUD PROVIDER: Protected shared key fragment built\n"+Const.getCurrentTime()+"CLOUD PROVIDER: Decrypting data\n")
         m = ElGamal.decrypt(c1, c2, dkg.s)
         return m, logMessage
     else:
@@ -107,8 +140,8 @@ def shares():
         # Verify request response
         if rsa.verifySign([CompanyPubKeyN, CompanyPubKeyE], message, sign) is True:
             dkg = setPedersenDKG(share1, share2, companyPubShare)
-            share1 = dkg.shares[Const.CLIENT_DKG_ID1-1]
-            share2 = dkg.shares[Const.CLIENT_DKG_ID2-1]
+            share1 = dkg.shares[Const.COMPANY_DKG_ID1-1]
+            share2 = dkg.shares[Const.COMPANY_DKG_ID2-1]
             pub = dkg.pubKey
             sign = rsa.generateSign([str(CloudProviderPubKeyN), str(CloudProviderPubKeyE), str(share1), str(share2), str(pub)], Const.CLOUD_PROVIDER)
             share1 = base64.encodestring(str(share1))
@@ -152,6 +185,24 @@ def decrypt():
             return Const.BAD_REQ
         m = str(m)
         message += (Const.getCurrentTime()+"CLOUD PROVIDER: Partial decryption successful\n")
+        sign = rsa.generateSign([m], Const.CLOUD_PROVIDER)
+        #m = encryptClientData(m, clientPubKeyN, clientPubKeyE)
+        return json.dumps({Const.M: m, Const.LOG: message, Const.SIGN: sign})
+    else:
+        return Const.NO_METHOD
+
+@app.route("/"+Const.DECRYPT2, methods=['POST'])
+def decrypt2():
+    if request.method == 'POST':
+        # Partial decryption using protected shared fragment and ask company for full decryption
+        content = request.get_json(force=True)
+        clientPubKeyN = (int)(content[Const.NE])
+        clientPubKeyE = (int)(content[Const.E])
+        m, message = decryptData2(content, clientPubKeyN, clientPubKeyE)
+        if m is Const.BAD_REQ:
+            return Const.BAD_REQ
+        m = str(m)
+        message += (Const.getCurrentTime()+"CLOUD PROVIDER: Partial decryption with password successful\n")
         sign = rsa.generateSign([m], Const.CLOUD_PROVIDER)
         #m = encryptClientData(m, clientPubKeyN, clientPubKeyE)
         return json.dumps({Const.M: m, Const.LOG: message, Const.SIGN: sign})

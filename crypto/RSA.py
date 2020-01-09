@@ -69,6 +69,5 @@ def verifySign(comps, message, sign):
     digest = SHA256.new(message)
     verified = verifier.verify(digest, sign)
     if verified:
-        print "Signature verification failed"
         return verified
     return True

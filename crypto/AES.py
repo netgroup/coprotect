@@ -1,6 +1,7 @@
 from Cryptodome.Cipher import AES
 from Cryptodome.Hash import SHA256
-from Cryptodome.Random import random
+#from Cryptodome.Random import random
+import random
 
 # Generate a random key
 def getKey(m):
@@ -10,7 +11,8 @@ def getKey(m):
 
 # Generate initialization vector for AES
 def getIV():
-    return ''.join([chr(random.randint(0, 0xFF)) for i in range(AES.block_size)])
+    csprng = random.SystemRandom()
+    return ''.join([chr(csprng.randint(0, 0xFF)) for i in range(AES.block_size)])
 
 # Add padding for block to encrypt
 def addPadding(data):

@@ -110,6 +110,7 @@
         maxFilesize: 1024,
         url: '/crypto/decrypt',
         previewsContainer: "#decrypt-dropzone-previews",
+        dictDefaultMessage: '[NORMAL USE: Company and Cloud Provider use their own fragments]',
         uploadMultiple: true,
         parallelUploads: 1,
         maxFiles: 1,
@@ -177,6 +178,56 @@
             //         });
             //     });
             //     file.previewElement.appendChild(removeButton);
+            });
+        }
+    };
+
+    Dropzone.options.decrypt2Dropzone = {
+        paramName: "file",
+        maxFilesize: 1024,
+        url: '/crypto/decrypt2',
+        previewsContainer: "#decrypt2-dropzone-previews",
+        dictDefaultMessage: '[ONLY FOR DEMONSTRATION: Cloud uses its own fragment and Cloud Provider uses the protected shared fragment. Password transmission needs to be performed in a more secure way]',
+        uploadMultiple: true,
+        parallelUploads: 1,
+        maxFiles: 1,
+        init: function() {
+            var file_name = 'file';
+            var file_ext = '.txt';
+            var file_type = 'text/plain';
+            this.on("success", function(file, response) {
+                $('.dz-progress').hide();
+                $('.dz-size').hide();
+                $('.dz-error-mark').hide();
+                console.log(response);
+                console.log(file);
+                console.log(atob(response));
+                download(atob(response), 'dec_'+file_name+file_ext, file_type);
+            });
+            this.on("sending", function(file, xhr, o) {
+                console.log(file);
+            });
+            this.on("drop", function (file) {
+            });
+            this.on("complete", function(file, resp) {
+                console.log(file);
+                console.log(resp);
+                $.get("/log/getLog", function(data, status){
+                    console.log(data);
+                    console.log(status);
+                    data = data.replace(/ /g, '\u00a0').replace(/\n/g, "<br/>");
+                    data = data.replace(/\t/g, "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
+                    document.getElementById('log').innerHTML = data;
+                });
+            });
+            this.on("addedfile", function(file) {
+                var file_splits = file.name.split('.');
+                file_name = file_splits[0];
+                if(file_splits.length === 1)
+                    file_ext = "";
+                else
+                    file_ext = "."+file_splits[1];
+                file_type = file.type;
             });
         }
     };

@@ -1,5 +1,5 @@
-from Cryptodome.Random import random
-import Const
+#from Cryptodome.Random import random
+import Const, random
 
 # Compute (a * b) % mod
 def mulmod(a, b, mod):
@@ -40,7 +40,8 @@ def modinv(a, m):
 
 # Elgamal encryption
 def encrypt(m, h):
-    y = random.randint(1, Const.P-1)
+    csprng = random.SystemRandom()
+    y = csprng.randint(1, Const.P-1)
     c1 = powerMod(Const.G, y, Const.P)
     s = powerMod(h, y, Const.P)
     c2 = mulmod(m,s, Const.P)
