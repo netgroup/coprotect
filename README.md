@@ -5,10 +5,12 @@ management to a Cloud Provider (or any other trusted third party) cannot be feas
 both of them have some advantages but also some relevant disvantages (e.g. in the case of your own key management, there 
 can be disastrous situations if there is a key loss; in the case of Cloud key management, there is the problem of the 
 trust).
-In order to try to solve the problems of these solutions, CoProtect builds a new trust model based on the collaboration 
-between the company and the Cloud Provider. The idea is to spit the key giving a fragment to each of them. This allows 
-the company to maintain full data access control, benefit from the strengths of the Cloud and recover from key loss or 
-theft.
+In order to try to solve the problems of these solutions, CoProtect provides an encryption tool based on the 
+collaboration between companies and Cloud providers for key management: encryption key is split into fragments held by 
+each of them. On the one hand, this gives the companies the control of their own data, and, on the other hand, it offers 
+disaster recovery and protection against accidental key loss or theft by any of the actors. It allows companies to be 
+the sole responsible for their data disclosure and foster the construction of data access and modification logging 
+service (required, in some cases, by GDPR), other than implementing their own access control policies independently.
 
 DESCRIPTION
 This project implements a Web service to provide a collaborative encryption/decryption scheme. In particular, when 
