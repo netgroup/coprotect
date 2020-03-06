@@ -1,11 +1,14 @@
 INTRODUCTION
-Encryption mechanisms solved the problem of protecting data, but it introduced the problem of storing the 
+Encryption mechanisms have solved the problem of protecting data, but they have introduced the problem of storing the 
 encryption/decryption keys in a secure location. In very critical contexts, managing keys on your own or delegating the 
-management to a Cloud Provider (or any other trusted third party) cannot be solutions for the SMEs, because both of them
-have some advantages but also some relevant disvantages (e.g. in the case of your own key management, there can be 
-disastrous situations if there is a key loss; in the case of Cloud key management, there is the problem of the trust).
+management to a Cloud Provider (or any other trusted third party) cannot be feasible solutions for the SMEs, because 
+both of them have some advantages but also some relevant disvantages (e.g. in the case of your own key management, there 
+can be disastrous situations if there is a key loss; in the case of Cloud key management, there is the problem of the 
+trust).
 In order to try to solve the problems of these solutions, CoProtect builds a new trust model based on the collaboration 
-between the company and the Cloud Provider.
+between the company and the Cloud Provider. The idea is to spit the key giving a fragment to each of them. This allows 
+the company to maintain full data access control, benefit from the strengths of the Cloud and recover from key loss or 
+theft.
 
 DESCRIPTION
 This project implements a Web service to provide a collaborative encryption/decryption scheme. In particular, when 
