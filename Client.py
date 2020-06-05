@@ -3,7 +3,7 @@ from Cryptodome.Hash import SHA256
 #from Cryptodome.Random import random
 from datetime import datetime
 from flask import Flask, request, render_template, Blueprint
-from flask_restplus import Resource, Api
+from flask_restx import Resource, Api
 from crypto import Const, ElGamal, RSA as rsa, AES as aes
 import base64, json, os, random, requests, struct
 

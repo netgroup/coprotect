@@ -57,7 +57,7 @@ COPY ./client/static/index.html /app/web/templates/
 RUN pip install Flask
 RUN pip install requests
 RUN pip install pycryptodomex
-RUN pip install flask_restplus
+RUN pip install flask_restx
 #RUN pip install psutil
 
 # Make port 80 available to the world outside this container
