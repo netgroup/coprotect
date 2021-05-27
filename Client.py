@@ -37,7 +37,8 @@ def saveConfig(outfile):
 # Load data from configuration file
 def loadConfig(infile):
     if os.path.isfile(infile) is True:
-        global ClientPubKeyN, ClientPubKeyE, CloudProviderPubKeyN, CloudProviderPubKeyE, CompanyPubKeyN, CompanyPubKeyE, PubKeyCompany
+        global ClientPubKeyN, ClientPubKeyE, CloudProviderPubKeyN, CloudProviderPubKeyE, CompanyPubKeyN, CompanyPubKeyE,\
+            PubKeyCompany
         with open(infile, 'r') as fin:
             # Read data from file
             data = json.load(fin)
@@ -63,7 +64,8 @@ def getPubKeyCompany(n, e):
         # Create POST request
         log(Const.getCurrentTime()+"CLIENT: Making POST request for company public key to Cloud Provider\n")
         headers = {'Content-Type': 'application/json'}
-        response = requests.post("http://"+Const.CLOUD_PROVIDER_ADDR+":"+Const.CLOUD_PROVIDER_PORT+"/"+Const.COMPANY_PUBKEY, data=data, headers=headers)
+        response = requests.post("http://"+Const.CLOUD_PROVIDER_ADDR+":"+Const.CLOUD_PROVIDER_PORT+"/"+
+                                 Const.COMPANY_PUBKEY, data=data, headers=headers)
         if (response.content is Const.NO_METHOD) or (response.content is Const.BAD_REQ):
             log(Const.getCurrentTime()+"CLIENT: Error in Company public key request!\n")
             return response.content
@@ -78,7 +80,8 @@ def getPubKeyCompany(n, e):
         logMessage = data[Const.LOG]
         log(logMessage)
         sign = base64.decodestring(data[Const.SIGN])
-        message = rsa.generateMessageForSign([str(PubKeyCompany), str(CompanyPubKeyN), str(CompanyPubKeyE), str(CloudProviderPubKeyN), str(CloudProviderPubKeyE)])
+        message = rsa.generateMessageForSign([str(PubKeyCompany), str(CompanyPubKeyN), str(CompanyPubKeyE),
+                                              str(CloudProviderPubKeyN), str(CloudProviderPubKeyE)])
         # Verify response
         log(Const.getCurrentTime()+"CLIENT: Verifying response signature\n")
         if rsa.verifySign([CloudProviderPubKeyN, CloudProviderPubKeyE], message, sign) is True:
@@ -223,7 +226,8 @@ def decryptFile(encfile):
             {Const.NE: ClientPubKeyN, Const.E: ClientPubKeyE, Const.C1: c1, Const.C2: c2, Const.SIGN: sign})
         headers = {'Content-Type': 'application/json'}
         log(Const.getCurrentTime()+"CLIENT: Asking partial decryption to Cloud Provider\n")
-        response = requests.post("http://"+Const.CLOUD_PROVIDER_ADDR+":"+Const.CLOUD_PROVIDER_PORT+"/"+Const.DECRYPT, data=data, headers=headers)
+        response = requests.post("http://"+Const.CLOUD_PROVIDER_ADDR+":"+Const.CLOUD_PROVIDER_PORT+"/"+Const.DECRYPT,
+                                 data=data, headers=headers)
         if (response.content is Const.NO_METHOD) or (response.content is Const.BAD_REQ):
             log(Const.getCurrentTime()+"CLIENT: Error during Cloud Provider decryption\n")
             return Const.ERROR
@@ -301,7 +305,8 @@ def decryptFile(encfile):
     return result
 
 
-# Decrypt file using protected shared fragment. Firstly retrieve password of the fragment from the Company Server (ALLOWED ONLY FOR DEMONSTRATION PURPOSE)
+# Decrypt file using protected shared fragment. Firstly retrieve password of the fragment from the Company Server
+# (ALLOWED ONLY FOR DEMONSTRATION PURPOSE)
 def decryptFile2(encfile):
     log(Const.getCurrentTime()+"CLIENT: DECRYPTION WITH PROTECTED SHARED FRAGMENT REQUESTED\n")
     # Retrieve the password of the protected shared fragment from the Company
@@ -366,12 +371,15 @@ def decryptFile2(encfile):
         if c2[-1:] is "L":
             c2 = c2[:-1]
         # Create POST request
-        sign = rsa.generateSign([str(ClientPubKeyN), str(ClientPubKeyE), str(c1), str(c2), str(password), str(iv)], Const.CLIENT)
+        sign = rsa.generateSign([str(ClientPubKeyN), str(ClientPubKeyE), str(c1), str(c2), str(password), str(iv)],
+                                Const.CLIENT)
         data = json.dumps(
-            {Const.NE: ClientPubKeyN, Const.E: ClientPubKeyE, Const.C1: c1, Const.C2: c2, Const.PASSWORD: password, Const.IV: base64.encodestring(iv), Const.SIGN: sign})
+            {Const.NE: ClientPubKeyN, Const.E: ClientPubKeyE, Const.C1: c1, Const.C2: c2, Const.PASSWORD: password,
+             Const.IV: base64.encodestring(iv), Const.SIGN: sign})
         headers = {'Content-Type': 'application/json'}
         log(Const.getCurrentTime()+"CLIENT: Asking partial decryption to Cloud Provider providing password\n")
-        response = requests.post("http://"+Const.CLOUD_PROVIDER_ADDR+":"+Const.CLOUD_PROVIDER_PORT+"/"+Const.DECRYPT2, data=data, headers=headers)
+        response = requests.post("http://"+Const.CLOUD_PROVIDER_ADDR+":"+Const.CLOUD_PROVIDER_PORT+"/"+Const.DECRYPT2,
+                                 data=data, headers=headers)
         if (response.content is Const.NO_METHOD) or (response.content is Const.BAD_REQ):
             log(Const.getCurrentTime()+"CLIENT: Error during Cloud Provider decryption with password\n")
             return Const.ERROR
@@ -395,8 +403,8 @@ def decryptFile2(encfile):
             {Const.NE: ClientPubKeyN, Const.E: ClientPubKeyE, Const.C1: c1, Const.C2: m, Const.SIGN: sign})
         headers = {'Content-Type': 'application/json'}
         log(Const.getCurrentTime()+"CLIENT: Asking final decryption to Company\n")
-        responseCompany = requests.post("http://" + Const.COMPANY_ADDR + ":" + Const.COMPANY_PORT + "/" + Const.DECRYPT2,
-                                        data=data, headers=headers)
+        responseCompany = requests.post("http://" + Const.COMPANY_ADDR + ":" + Const.COMPANY_PORT + "/" +
+                                        Const.DECRYPT2, data=data, headers=headers)
         if (responseCompany.content is Const.NO_METHOD) or (responseCompany.content is Const.BAD_REQ):
             log(Const.getCurrentTime()+"CLIENT: Error during Company decryption\n")
             return Const.ERROR
